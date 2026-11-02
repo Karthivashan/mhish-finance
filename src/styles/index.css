@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens — space separated RGB triplets so Tailwind alpha modifiers work.
+   Brand: forest #0B3D2E · leaf #00A651 · cream #F7F4ED */
+:root,
+[data-theme='dark'] {
+  --bg: 24 44 37;
+  --surface: 15 74 56;
+  --raised: 21 90 69;
+  --line: 61 120 98;
+  --ink: 247 244 237;
+  --muted: 160 192 177;
+  --accent: 0 166 81;
+  --accent-ink: 255 255 255;
+  --income: 52 211 123;
+  --expense: 255 122 110;
+  --warn: 245 197 66;
+  --shadow: 0 0 0;
+  color-scheme: dark;
+}
+[data-theme='light'] {
+  --bg: 247 244 237;
+  --surface: 255 255 252;
+  --raised: 240 236 226;
+  --line: 218 212 197;
+  --ink: 11 61 46;
+  --muted: 92 117 106;
+  --accent: 0 140 68;
+  --accent-ink: 255 255 255;
+  --income: 0 140 68;
+  --expense: 205 62 50;
+  --warn: 176 118 0;
+  --shadow: 11 61 46;
+  color-scheme: light;
+}
+[data-theme='light'] .sidebar-panel {
+  --surface: 17 68 52;
+  --raised: 21 90 69;
+  --line: 61 120 98;
+  --ink: 247 244 237;
+  --muted: 160 192 177;
+  background-color: rgb(var(--surface));
+}
+
+html, body, #root { min-height: 100%; }
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+  transition: background-color .25s ease, color .25s ease;
+  overflow-x: hidden;
+}
+* { @apply border-line; }
+::selection { background: rgb(var(--accent) / 0.35); }
+:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: 8px; }
+
+.tnum { font-variant-numeric: tabular-nums; }
+
+@layer components {
+  .card { @apply bg-surface border border-line/70 rounded-2xl shadow-card; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 h-11 text-sm font-semibold transition active:scale-[.98] disabled:opacity-50 disabled:pointer-events-none; }
+  .btn-primary { @apply btn bg-accent text-accent-ink hover:brightness-110 shadow-[0_6px_18px_-8px_rgb(var(--accent)/0.9)]; }
+  .btn-ghost { @apply btn border border-line bg-transparent text-ink hover:bg-raised; }
+  .btn-danger { @apply btn bg-expense text-white hover:brightness-110; }
+  .btn-icon { @apply inline-flex items-center justify-center h-10 w-10 rounded-xl border border-line/80 text-ink hover:bg-raised transition; }
+  .field { @apply w-full rounded-xl border border-line bg-bg/40 px-4 h-11 text-sm text-ink placeholder:text-muted/70 transition focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30; }
+  .label { @apply block text-xs font-semibold uppercase tracking-wider text-muted mb-2; }
+  .eyebrow { @apply text-[11px] font-bold uppercase tracking-[0.14em] text-muted; }
+}
+
+/* Subtle page grain / glow behind content */
+.app-glow::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgb(2 48 32 / 0.14), transparent 60%),
+    radial-gradient(40rem 30rem at -10% 110%, rgb(2 48 32 / 0.08), transparent 60%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+.recharts-tooltip-wrapper { outline: none; }
+.skeleton { position: relative; overflow: hidden; @apply bg-raised rounded-xl; }
+.skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgb(var(--ink)/0.08), transparent); animation: shimmer 1.2s infinite; }
