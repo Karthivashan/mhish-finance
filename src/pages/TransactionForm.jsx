@@ -60,8 +60,8 @@ function Form({ type, editing }) {
           {income ? <ArrowDownLeft size={24} /> : <ArrowUpRight size={24} />}
         </span>
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight sm:text-[28px]">{editing ? 'Edit' : 'New'} {income ? 'income' : 'expense'}</h1>
-          <p className="text-sm text-muted">{income ? 'Money coming in — it will increase your balance.' : 'Money going out — it will reduce your balance.'}</p>
+          <h1 className="text-xl font-extrabold tracking-tight sm:text-[28px]">{editing ? 'Edit' : 'New'} {income ? 'income' : 'expense'}</h1>
+          <p className="text-xs text-muted sm:text-sm">{income ? 'Money coming in — it will increase your balance.' : 'Money going out — it will reduce your balance.'}</p>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ function Form({ type, editing }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="card space-y-8 p-5 sm:p-8">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="card space-y-6 p-4 sm:space-y-8 sm:p-8">
         <div>
           <label htmlFor="amount" className="label">Amount</label>
           <Controller name="amount" control={control}
@@ -87,14 +87,14 @@ function Form({ type, editing }) {
                 return true;
               },
             }}
-            render={({ field }) => <AmountInput {...field} invalid={!!errors.amount} describedBy="amount-error" tone={income ? 'text-income' : 'text-expense'} />} />
+            render={({ field }) => <AmountInput {...field} invalid={!!errors.amount} describedBy="amount-error" tone={income ? 'text-income' : 'text-expense'} calculator />} />
           {errors.amount && <p id="amount-error" role="alert" className="mt-2 text-xs font-semibold text-expense">{errors.amount.message}</p>}
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-[1fr_220px]">
+        <div className="grid gap-4 sm:grid-cols-[1fr_220px] sm:gap-6">
           <div>
             <label htmlFor="description" className="label">Description <span className="font-medium normal-case tracking-normal">(optional)</span></label>
-            <textarea id="description" rows={4} className="field !h-auto resize-none py-3 leading-relaxed" placeholder={income ? 'e.g. November salary credited' : 'e.g. Groceries for the week'}
+            <textarea id="description" rows={3} className="field !h-auto resize-none py-3 leading-relaxed" placeholder={income ? 'e.g. November salary credited' : 'e.g. Groceries for the week'}
               aria-invalid={!!errors.description} aria-describedby="desc-help"
               {...register('description', { maxLength: { value: 300, message: 'Keep the description under 300 characters.' } })} />
             <p id="desc-help" className={`mt-1.5 text-right text-xs tnum ${desc.length > 300 ? 'font-bold text-expense' : 'text-muted'}`}>{errors.description?.message || `${desc.length}/300`}</p>

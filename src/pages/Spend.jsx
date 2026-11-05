@@ -40,8 +40,9 @@ export default function Spend() {
   };
 
   return (
-    <div className="space-y-6">
-      <PageHeader eyebrow="Spend" title={<>Income & <span className="text-[#0BDA51]">Expenses</span></>} subtitle="Record money in and out, and review every transaction.">
+    <div className="space-y-3 sm:space-y-6">
+      <PageHeader className="mb-4 flex flex-col gap-3 sm:mb-7 sm:flex-row sm:items-end sm:justify-between sm:gap-4"
+        eyebrow="Spend" title={<>Income & <span className="text-[#0BDA51]">Expenses</span></>} subtitle="Record money in and out, and review every transaction.">
         <Link to={`/spend/new/${tab}`} className="btn-primary"><Plus size={18} />Add {income ? 'income' : 'expense'}</Link>
       </PageHeader>
 
@@ -49,20 +50,20 @@ export default function Spend() {
         {TABS.map(({ key, label, icon: Icon }) => (
           <button key={key} id={`tab-${key}`} role="tab" aria-selected={tab === key} aria-controls="tab-panel" tabIndex={tab === key ? 0 : -1}
             onClick={() => setParams({ tab: key }, { replace: true })}
-            className={`flex h-10 min-w-32 items-center justify-center gap-2 rounded-lg px-5 text-sm font-bold transition ${tab === key ? 'bg-accent text-accent-ink shadow' : 'text-muted hover:text-ink'}`}>
+            className={`flex h-10 min-w-0 items-center justify-center gap-2 rounded-lg px-3 text-xs font-bold transition sm:min-w-32 sm:px-5 sm:text-sm ${tab === key ? 'bg-accent text-accent-ink shadow' : 'text-muted hover:text-ink'}`}>
             <Icon size={16} />{label}
           </button>
         ))}
       </div>
 
       <section id="tab-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="card">
-        <div className="flex flex-col gap-4 border-b border-line/60 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 border-b border-line/60 p-4 sm:gap-4 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="eyebrow">{scope === 'month' ? monthLabel : 'All time'} · {income ? 'Total income' : 'Total expenses'}</p>
             <p className={`mt-1 text-3xl font-extrabold tracking-tight tnum ${income ? 'text-income' : 'text-expense'}`}>{formatINR(total)}</p>
             <p className="text-xs text-muted">{rows.length} {rows.length === 1 ? 'transaction' : 'transactions'}</p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
             <div className="grid grid-cols-2 gap-1 rounded-xl border border-line bg-bg/40 p-1" role="group" aria-label="Date range">
               {[['month', 'This month'], ['all', 'All time']].map(([k, l]) => (
                 <button key={k} type="button" aria-pressed={scope === k} onClick={() => setScope(k)}
@@ -76,9 +77,9 @@ export default function Spend() {
             </div>
           </div>
         </div>
-        {scope === 'month' && <div className="border-b border-line/60 px-5 py-3 sm:px-6"><MonthSelector /></div>}
+        {scope === 'month' && <div className="border-b border-line/60 px-4 py-2 sm:px-6 sm:py-3"><MonthSelector /></div>}
 
-        <div className="p-2 sm:p-4">
+        <div className="p-1.5 sm:p-4">
           {rows.length === 0 ? (
             <EmptyState icon={Receipt}
               title={query ? 'No matches found' : allCount === 0 ? `No ${income ? 'income' : 'expenses'} yet` : `Nothing in ${scope === 'month' ? monthLabel : 'this view'}`}
