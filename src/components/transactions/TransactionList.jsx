@@ -12,7 +12,7 @@ export function TransactionRow({ tx, actions = true, onDelete, compact = false }
   const cat = getCategory(tx.categoryId);
   const income = tx.type === 'income';
   return (
-    <li className="group flex items-center gap-3 rounded-xl px-2 py-3 transition hover:bg-raised/70 sm:gap-4 sm:px-3">
+    <li className={`group flex flex-wrap items-center gap-x-3 gap-y-2 ${actions ? 'rounded-2xl border border-line/70 bg-bg/25 px-3 py-3 shadow-sm' : 'rounded-xl px-2 py-3'} transition hover:bg-raised/70 sm:flex-nowrap sm:gap-4 sm:px-3 ${actions ? 'sm:rounded-xl sm:border-0 sm:bg-transparent sm:shadow-none' : ''}`}>
       <CategoryIcon name={cat.icon} color={cat.color} size={compact ? 38 : 44} />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
@@ -24,7 +24,7 @@ export function TransactionRow({ tx, actions = true, onDelete, compact = false }
       </div>
       <p className="hidden w-28 shrink-0 text-right text-xs text-muted sm:block">{fmtDate(tx.date)}</p>
       <div className="flex shrink-0 flex-col items-end">
-        <span className={`inline-flex items-center gap-1 text-sm font-extrabold tnum ${income ? 'text-income' : 'text-expense'}`}>
+        <span className={`inline-flex items-center gap-1 whitespace-nowrap text-[13px] font-extrabold tnum sm:text-sm ${income ? 'text-income' : 'text-expense'}`}>
           {income ? <ArrowDownLeft size={14} aria-hidden /> : <ArrowUpRight size={14} aria-hidden />}
           <span className="sr-only">{income ? 'Income' : 'Expense'}</span>
           {income ? '+' : '−'}{formatINR(tx.amount)}
@@ -32,7 +32,7 @@ export function TransactionRow({ tx, actions = true, onDelete, compact = false }
         <span className={`text-[10px] font-bold uppercase tracking-wider ${income ? 'text-income/80' : 'text-expense/80'}`}>{income ? 'Income' : 'Expense'}</span>
       </div>
       {actions && (
-        <div className="flex shrink-0 gap-1">
+        <div className="flex w-full justify-end gap-1 border-t border-line/50 pt-2 sm:ml-0 sm:w-auto sm:shrink-0 sm:border-0 sm:pt-0">
           <button type="button" className="btn-icon !h-9 !w-9" aria-label={`Edit ${cat.name} transaction`} onClick={() => navigate(`/spend/edit/${tx.id}`)}><Pencil size={15} /></button>
           <button type="button" className="btn-icon !h-9 !w-9 hover:!border-expense/60 hover:!text-expense" aria-label={`Delete ${cat.name} transaction`} onClick={() => onDelete(tx)}><Trash2 size={15} /></button>
         </div>
@@ -46,7 +46,7 @@ export default function TransactionList({ transactions }) {
   const [target, setTarget] = useState(null);
   return (
     <>
-      <ul className="divide-y divide-line/50">
+      <ul className="space-y-2 divide-y-0 sm:space-y-0 sm:divide-y sm:divide-line/50">
         {transactions.map((tx) => <TransactionRow key={tx.id} tx={tx} onDelete={setTarget} />)}
       </ul>
       <ConfirmDialog open={!!target} onClose={() => setTarget(null)}

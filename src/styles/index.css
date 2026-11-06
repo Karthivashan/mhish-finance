@@ -6,19 +6,23 @@
    Brand: forest #0B3D2E · leaf #00A651 · cream #F7F4ED */
 :root,
 [data-theme='dark'] {
-  --bg: 24 44 37;
-  --surface: 15 74 56;
-  --raised: 21 90 69;
-  --line: 61 120 98;
-  --ink: 247 244 237;
-  --muted: 160 192 177;
-  --accent: 0 166 81;
-  --accent-ink: 255 255 255;
+  --bg: 29 24 36;
+  --surface: 48 38 56;
+  --raised: 61 48 69;
+  --line: 82 66 91;
+  --ink: 248 240 250;
+  --muted: 184 167 190;
+  --accent: 243 141 253;
+  --accent-ink: 29 24 36;
   --income: 52 211 123;
   --expense: 255 122 110;
   --warn: 245 197 66;
   --shadow: 0 0 0;
   color-scheme: dark;
+}
+[data-theme='dark'] .sidebar-panel {
+  --surface: 23 19 29;
+  background-color: rgb(var(--surface));
 }
 [data-theme='light'] {
   --bg: 247 244 237;
@@ -75,6 +79,11 @@ body {
   background:
     radial-gradient(60rem 30rem at 85% -10%, rgb(2 48 32 / 0.14), transparent 60%),
     radial-gradient(40rem 30rem at -10% 110%, rgb(2 48 32 / 0.08), transparent 60%);
+}
+[data-theme='dark'] .app-glow::before {
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgb(243 141 253 / 0.10), transparent 60%),
+    radial-gradient(40rem 30rem at -10% 110%, rgb(243 141 253 / 0.06), transparent 60%);
 }
 
 @media (prefers-reduced-motion: reduce) {

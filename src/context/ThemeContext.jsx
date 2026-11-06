@@ -10,7 +10,7 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0B3D2E' : '#F7F4ED');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#1D1824' : '#F7F4ED');
   }, [theme]);
 
   const setTheme = useCallback((t) => setPrefs({ theme: t }), [setPrefs]);
