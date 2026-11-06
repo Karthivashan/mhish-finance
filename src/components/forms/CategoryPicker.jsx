@@ -55,22 +55,22 @@ export default function CategoryPicker({ type, value, onChange, error }) {
 
   return (
     <div>
-      <div role="radiogroup" aria-label={`${type} category`} className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <div role="radiogroup" aria-label={`${type} category`} className="grid max-h-44 grid-cols-2 gap-2 overflow-y-auto overscroll-contain pr-1 sm:max-h-none sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:pr-0 lg:grid-cols-4">
         {list.map((c) => {
           const on = value === c.id;
           return (
             <button key={c.id} type="button" role="radio" aria-checked={on} onClick={() => onChange(c.id)}
-              className={`group relative flex flex-col items-center gap-2.5 rounded-2xl border p-4 text-center transition hover:-translate-y-0.5 ${on ? 'border-transparent bg-raised' : 'border-line/70 hover:bg-raised/60'}`}
+              className={`group relative flex flex-col items-center gap-1.5 rounded-2xl border p-2 text-center transition hover:-translate-y-0.5 sm:gap-2.5 sm:p-4 ${on ? 'border-transparent bg-raised' : 'border-line/70 hover:bg-raised/60'}`}
               style={on ? { boxShadow: `0 0 0 2px ${c.color}, 0 10px 24px -14px ${c.color}` } : undefined}>
               {on && <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full text-white" style={{ background: c.color }}><Check size={12} strokeWidth={3} /></span>}
-              <CategoryIcon name={c.icon} color={c.color} size={46} />
+              <CategoryIcon name={c.icon} color={c.color} size={36} className="sm:!h-[46px] sm:!w-[46px]" />
               <span className="w-full truncate text-sm font-bold">{c.name}</span>
             </button>
           );
         })}
         <button type="button" onClick={() => setAdding((a) => !a)} aria-expanded={adding}
-          className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-dashed border-line p-4 text-muted transition hover:border-accent hover:text-accent">
-          <span className="flex h-[46px] w-[46px] items-center justify-center rounded-xl bg-raised"><Plus size={22} /></span>
+          className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line p-2 text-muted transition hover:border-accent hover:text-accent sm:gap-2.5 sm:p-4">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-raised sm:h-[46px] sm:w-[46px]"><Plus size={22} /></span>
           <span className="text-sm font-bold">Add new</span>
         </button>
       </div>

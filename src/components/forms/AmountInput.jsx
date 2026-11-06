@@ -3,7 +3,7 @@ import { forwardRef, useState } from 'react';
 import { displayAmountInput, sanitizeAmountInput } from '../../utils/currencyUtils';
 
 /** ₹ input that groups digits Indian-style as you type and keeps ≤ 2 decimals. Value is the raw numeric string. */
-const AmountInput = forwardRef(function AmountInput({ value, onChange, onBlur, name, invalid, describedBy, tone = 'text-ink', calculator = false }, ref) {
+const AmountInput = forwardRef(function AmountInput({ value, onChange, onBlur, name, invalid, describedBy, tone = 'text-ink', calculator = false, compact = false }, ref) {
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [display, setDisplay] = useState('0');
   const [accumulator, setAccumulator] = useState(null);
@@ -92,13 +92,13 @@ const AmountInput = forwardRef(function AmountInput({ value, onChange, onBlur, n
 
   return (
     <div className="space-y-2">
-      <div className={`flex items-center gap-2 rounded-2xl border bg-bg/40 px-4 py-3 transition focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/30 sm:px-5 sm:py-4 ${invalid ? 'border-expense' : 'border-line'}`}>
-        <span className={`text-2xl font-extrabold sm:text-3xl ${tone}`} aria-hidden="true">₹</span>
+      <div className={`flex items-center gap-2 rounded-2xl border bg-bg/40 transition focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/30 ${compact ? 'px-3 py-2 sm:px-5 sm:py-4' : 'px-4 py-3 sm:px-5 sm:py-4'} ${invalid ? 'border-expense' : 'border-line'}`}>
+        <span className={`${compact ? 'text-xl sm:text-3xl' : 'text-2xl sm:text-3xl'} font-extrabold ${tone}`} aria-hidden="true">₹</span>
         <input ref={ref} id="amount" name={name}
           onBlur={() => { if (value !== '' && value != null && Number.isFinite(parseFloat(value))) onChange(parseFloat(value).toFixed(2)); onBlur?.(); }} inputMode="decimal" autoComplete="off" placeholder="0.00"
           aria-invalid={invalid} aria-describedby={describedBy}
           value={displayAmountInput(value)} onChange={(e) => onChange(sanitizeAmountInput(e.target.value.replace(/,/g, '')))}
-          className="w-full min-w-0 bg-transparent text-2xl font-extrabold tracking-tight tnum outline-none placeholder:text-muted/40 sm:text-3xl" />
+          className={`w-full min-w-0 bg-transparent font-extrabold tracking-tight tnum outline-none placeholder:text-muted/40 ${compact ? 'text-xl sm:text-3xl' : 'text-2xl sm:text-3xl'}`} />
         {calculator && (
           <button type="button" aria-label={calculatorOpen ? 'Close amount calculator' : 'Open amount calculator'} aria-expanded={calculatorOpen} aria-controls="amount-calculator"
             onClick={calculatorOpen ? () => setCalculatorOpen(false) : openCalculator}

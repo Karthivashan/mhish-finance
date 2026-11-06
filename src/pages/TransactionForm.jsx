@@ -74,9 +74,9 @@ function Form({ type, editing }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="card space-y-6 p-4 sm:space-y-8 sm:p-8">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="card space-y-4 p-3 sm:space-y-8 sm:p-8">
         <div>
-          <label htmlFor="amount" className="label">Amount</label>
+          <label htmlFor="amount" className="label !mb-1">Amount</label>
           <Controller name="amount" control={control}
             rules={{
               required: 'Enter an amount.',
@@ -87,20 +87,20 @@ function Form({ type, editing }) {
                 return true;
               },
             }}
-            render={({ field }) => <AmountInput {...field} invalid={!!errors.amount} describedBy="amount-error" tone={income ? 'text-income' : 'text-expense'} calculator />} />
+            render={({ field }) => <AmountInput {...field} invalid={!!errors.amount} describedBy="amount-error" tone={income ? 'text-income' : 'text-expense'} calculator compact />} />
           {errors.amount && <p id="amount-error" role="alert" className="mt-2 text-xs font-semibold text-expense">{errors.amount.message}</p>}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-[1fr_220px] sm:gap-6">
+        <div className="grid gap-3 sm:grid-cols-[1fr_220px] sm:gap-6">
           <div>
-            <label htmlFor="description" className="label">Description <span className="font-medium normal-case tracking-normal">(optional)</span></label>
-            <textarea id="description" rows={3} className="field !h-auto resize-none py-3 leading-relaxed" placeholder={income ? 'e.g. November salary credited' : 'e.g. Groceries for the week'}
+            <label htmlFor="description" className="label !mb-1">Description <span className="font-medium normal-case tracking-normal">(optional)</span></label>
+            <textarea id="description" rows={2} className="field !h-auto resize-none py-2 text-sm leading-snug" placeholder={income ? 'e.g. November salary credited' : 'e.g. Groceries for the week'}
               aria-invalid={!!errors.description} aria-describedby="desc-help"
               {...register('description', { maxLength: { value: 300, message: 'Keep the description under 300 characters.' } })} />
             <p id="desc-help" className={`mt-1.5 text-right text-xs tnum ${desc.length > 300 ? 'font-bold text-expense' : 'text-muted'}`}>{errors.description?.message || `${desc.length}/300`}</p>
           </div>
           <div>
-            <label htmlFor="date" className="label">Date</label>
+            <label htmlFor="date" className="label !mb-1">Date</label>
             <input id="date" type="date" className="field" min="2000-01-01" max="2100-12-31" aria-invalid={!!errors.date} aria-describedby="date-error"
               {...register('date', { required: 'Pick a date.', validate: (v) => isValidISODate(v) || 'Enter a valid date.' })} />
             {errors.date && <p id="date-error" role="alert" className="mt-2 text-xs font-semibold text-expense">{errors.date.message}</p>}
@@ -108,12 +108,12 @@ function Form({ type, editing }) {
         </div>
 
         <div>
-          <p className="label">Category</p>
+          <p className="label !mb-1">Category</p>
           <Controller name="categoryId" control={control} rules={{ required: 'Choose a category.' }}
             render={({ field }) => <CategoryPicker type={type} value={field.value} onChange={field.onChange} error={errors.categoryId?.message} />} />
         </div>
 
-        <div className="flex flex-col-reverse gap-3 border-t border-line/60 pt-6 sm:flex-row sm:justify-end">
+        <div className="flex flex-col-reverse gap-3 border-t border-line/60 pt-4 sm:flex-row sm:justify-end sm:pt-6">
           <button type="button" className="btn-ghost sm:min-w-32" onClick={() => navigate(`/spend?tab=${type}`)}>Cancel</button>
           <button type="submit" className="btn-primary sm:min-w-48" disabled={isSubmitting}><Save size={17} />{editing ? 'Save changes' : 'Save Transaction'}</button>
         </div>
