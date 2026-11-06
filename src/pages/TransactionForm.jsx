@@ -1,4 +1,4 @@
-import { ArrowDownLeft, ArrowLeft, ArrowUpRight, Save } from 'lucide-react';
+import { ArrowDownLeft, ArrowLeft, Save } from 'lucide-react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
@@ -55,15 +55,17 @@ function Form({ type, editing }) {
   return (
     <div className="mx-auto max-w-3xl">
       <Link to={`/spend?tab=${type}`} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-muted hover:text-ink"><ArrowLeft size={16} />Back to Spend</Link>
-      <div className="mb-7 flex items-center gap-4">
-        <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${income ? 'bg-income/15 text-income' : 'bg-expense/15 text-expense'}`}>
-          {income ? <ArrowDownLeft size={24} /> : <ArrowUpRight size={24} />}
-        </span>
-        <div>
-          <h1 className="text-xl font-extrabold tracking-tight sm:text-[28px]">{editing ? 'Edit' : 'New'} {income ? 'income' : 'expense'}</h1>
-          <p className="text-xs text-muted sm:text-sm">{income ? 'Money coming in — it will increase your balance.' : 'Money going out — it will reduce your balance.'}</p>
+      {income && (
+        <div className="mb-7 flex items-center gap-4">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-income/15 text-income">
+            <ArrowDownLeft size={24} />
+          </span>
+          <div>
+            <h1 className="text-xl font-extrabold tracking-tight sm:text-[28px]">{editing ? 'Edit' : 'New'} income</h1>
+            <p className="text-xs text-muted sm:text-sm">Money coming in — it will increase your balance.</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {!editing && (
         <div role="group" aria-label="Transaction type" className="mb-6 grid grid-cols-2 gap-1 rounded-xl border border-line bg-bg/40 p-1">
