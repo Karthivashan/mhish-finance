@@ -41,12 +41,12 @@ export default function Spend() {
 
   return (
     <div className="space-y-3 sm:space-y-6">
-      <PageHeader className="mb-4 flex flex-col gap-3 sm:mb-7 sm:flex-row sm:items-end sm:justify-between sm:gap-4"
+      <PageHeader className="hidden mb-4 flex-col gap-3 sm:mb-7 sm:flex sm:flex-row sm:items-end sm:justify-between sm:gap-4"
         eyebrow="Spend" title={<>Income & <span className="text-[#0BDA51]">Expenses</span></>} subtitle="Record money in and out, and review every transaction.">
         <Link to={`/spend/new/${tab}`} className="btn-primary"><Plus size={18} />Add {income ? 'income' : 'expense'}</Link>
       </PageHeader>
 
-      <div role="tablist" aria-label="Transaction type" onKeyDown={onKey} className="inline-grid grid-cols-2 gap-1 rounded-xl border border-line bg-surface p-1">
+      <div role="tablist" aria-label="Transaction type" onKeyDown={onKey} className="grid w-full grid-cols-2 gap-1 rounded-xl border border-line bg-surface p-1 sm:w-auto">
         {TABS.map(({ key, label, icon: Icon }) => (
           <button key={key} id={`tab-${key}`} role="tab" aria-selected={tab === key} aria-controls="tab-panel" tabIndex={tab === key ? 0 : -1}
             onClick={() => setParams({ tab: key }, { replace: true })}
@@ -64,11 +64,13 @@ export default function Spend() {
             <p className="text-xs text-muted">{rows.length} {rows.length === 1 ? 'transaction' : 'transactions'}</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-            <div className="grid grid-cols-2 gap-1 rounded-xl border border-line bg-bg/40 p-1" role="group" aria-label="Date range">
-              {[['month', 'This month'], ['all', 'All time']].map(([k, l]) => (
-                <button key={k} type="button" aria-pressed={scope === k} onClick={() => setScope(k)}
-                  className={`h-9 rounded-lg px-4 text-xs font-bold transition ${scope === k ? 'bg-raised text-ink shadow' : 'text-muted hover:text-ink'}`}>{k === 'month' ? 'Month' : l}</button>
-              ))}
+            <div className="-mx-1 overflow-x-auto px-1">
+              <div className="inline-flex min-w-full w-max gap-1 rounded-xl border border-line bg-bg/40 p-1" role="group" aria-label="Date range">
+                {[['month', 'This month'], ['all', 'All time']].map(([k, l]) => (
+                  <button key={k} type="button" aria-pressed={scope === k} onClick={() => setScope(k)}
+                    className={`h-9 shrink-0 whitespace-nowrap rounded-lg px-4 text-xs font-bold transition ${scope === k ? 'bg-raised text-ink shadow' : 'text-muted hover:text-ink'}`}>{k === 'month' ? 'Month' : l}</button>
+                ))}
+              </div>
             </div>
             <div className="relative">
               <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
