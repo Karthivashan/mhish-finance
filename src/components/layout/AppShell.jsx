@@ -81,7 +81,7 @@ export default function AppShell() {
               <LogOut size={16} /><span className="hidden sm:inline">Sign out</span>
             </button>
             <ThemeIconButton />
-            <NotificationPanel />
+            <div className="hidden sm:block"><NotificationPanel /></div>
             <Link to="/spend/new/expense" className="btn-primary !px-3.5 sm:!px-4" aria-label="Add transaction"><Plus size={18} /><span className="hidden sm:inline">Add transaction</span></Link>
           </div>
         </header>

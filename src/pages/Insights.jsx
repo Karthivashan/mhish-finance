@@ -37,7 +37,7 @@ export default function Insights() {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Insights" title={<>Financial  <span className="text-[#0BDA51]">analytics</span></>}  subtitle={`Everything below is calculated live from your transactions — ${monthLabel}.`}>
+      <PageHeader eyebrow="Insights" title={<>Financial  <span className="text-[#930031]">analytics</span></>}  subtitle={`Everything below is calculated live from your transactions — ${monthLabel}.`}>
         
         <MonthSelector />
       </PageHeader>
