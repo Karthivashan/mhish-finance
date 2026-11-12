@@ -44,7 +44,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Overview" title={<>{greeting()}, <span className="text-[#0BDA51]">{firstName}</span></>} subtitle={`Here’s how ${monthLabel} is shaping up.`}>
+      <PageHeader eyebrow="Overview" title={<>{greeting()}, <span className="text-[#E5604D]">{firstName}</span></>} subtitle={`Here’s how ${monthLabel} is shaping up.`}>
         <MonthSelector />
       </PageHeader>
 

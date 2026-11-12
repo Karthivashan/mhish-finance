@@ -42,7 +42,7 @@ export default function Spend() {
   return (
     <div className="space-y-3 sm:space-y-6">
       <PageHeader className="hidden mb-4 flex-col gap-3 sm:mb-7 sm:flex sm:flex-row sm:items-end sm:justify-between sm:gap-4"
-        eyebrow="Spend" title={<>Income & <span className="text-[#0BDA51]">Expenses</span></>} subtitle="Record money in and out, and review every transaction.">
+        eyebrow="Spend" title={<>Income & <span className="text-[#E5604D]">Expenses</span></>} subtitle="Record money in and out, and review every transaction.">
         <Link to={`/spend/new/${tab}`} className="btn-primary"><Plus size={18} />Add {income ? 'income' : 'expense'}</Link>
       </PageHeader>
 

@@ -80,7 +80,7 @@ export default function Budgets() {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Budgets" title={<>Category  <span className="text-[#0BDA51]">budgets</span></>}
+      <PageHeader eyebrow="Budgets" title={<>Category  <span className="text-[#E5604D]">budgets</span></>}
         subtitle={`Spending against your monthly limits — ${monthLabel}.`}>
         <MonthSelector />
         <button type="button" className="btn-primary" disabled={available.length === 0} onClick={() => setDialog({ open: true, editing: null })}

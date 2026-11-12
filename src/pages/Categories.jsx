@@ -143,7 +143,7 @@ export default function Categories() {
   return (
     <div className="space-y-10">
       <PageHeader eyebrow="Categories"
-      title={<>Manage  <span className="text-[#0BDA51]">categories</span></>}
+      title={<>Manage  <span className="text-[#E5604D]">categories</span></>}
       
        subtitle="Icons and colours you pick here are used everywhere — forms, history, charts and insights.">
         <button type="button" className="btn-primary" onClick={() => setDialog({ open: true, type: 'expense' })}><Plus size={18} />New category</button>
