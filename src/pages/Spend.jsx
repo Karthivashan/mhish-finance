@@ -40,7 +40,7 @@ export default function Spend() {
   };
 
   return (
-    <div className="space-y-3 sm:space-y-6">
+    <div className="flex h-[calc(100dvh-124px)] min-h-0 flex-col space-y-3 overflow-hidden sm:h-[calc(100dvh-140px)] sm:space-y-6">
       <PageHeader className="hidden mb-4 flex-col gap-3 sm:mb-7 sm:flex sm:flex-row sm:items-end sm:justify-between sm:gap-4"
         eyebrow="Spend" title={<>Income & <span className="text-[#E5604D]">Expenses</span></>} subtitle="Record money in and out, and review every transaction.">
         <Link to={`/spend/new/${tab}`} className="btn-primary"><Plus size={18} />Add {income ? 'income' : 'expense'}</Link>
@@ -56,7 +56,7 @@ export default function Spend() {
         ))}
       </div>
 
-      <section id="tab-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="card">
+      <section id="tab-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="card flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="flex flex-col gap-3 border-b border-line/60 p-4 sm:gap-4 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="eyebrow">{scope === 'month' ? monthLabel : 'All time'} · {income ? 'Total income' : 'Total expenses'}</p>
@@ -81,7 +81,7 @@ export default function Spend() {
         </div>
         {scope === 'month' && <div className="border-b border-line/60 px-4 py-2 sm:px-6 sm:py-3"><MonthSelector /></div>}
 
-        <div className="p-1.5 sm:p-4">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-1.5 sm:p-4">
           {rows.length === 0 ? (
             <EmptyState icon={Receipt}
               title={query ? 'No matches found' : allCount === 0 ? `No ${income ? 'income' : 'expenses'} yet` : `Nothing in ${scope === 'month' ? monthLabel : 'this view'}`}
