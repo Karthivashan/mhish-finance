@@ -109,7 +109,7 @@ export default function Profile() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <PageHeader eyebrow="Profile & Settings" 
-      title={<>Your  <span className="text-[#0BDA51]">preferences</span></>}
+      title={<>Your  <span className="text-[#E5604D]">preferences</span></>}
       subtitle={`Signed in as ${user?.email || 'Google user'}. Your profile and finance data sync to your private Google Drive.`} />
 
       <Section id="profile" title="Personal profile">
