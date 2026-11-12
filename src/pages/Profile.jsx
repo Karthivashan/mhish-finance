@@ -9,6 +9,7 @@ import { ConfirmDialog } from '../components/ui/Dialog';
 import MonthSelector from '../components/ui/MonthSelector';
 import PageHeader from '../components/ui/PageHeader';
 import { useApp } from '../context/AppContext';
+import { useGoogleDrive } from '../context/GoogleDriveContext';
 import { validateBudgets, validateNotifications } from '../services/budgetService';
 import { DEFAULT_CATEGORIES, COLOR_PALETTE, validateCategories } from '../services/categoryService';
 import { categorySummaryCSV, download, fullBackupJSON, monthlyReportCSV, transactionsCSV } from '../services/exportService';
@@ -59,6 +60,7 @@ function resizeImage(file, size = 160) {
 
 export default function Profile() {
   const app = useApp();
+  const { user, status } = useGoogleDrive();
   const { profile, preferences, transactions, categories, month, monthLabel, setProfile, setPrefs } = app;
   const { hash } = useLocation();
   const fileRef = useRef(null);
@@ -108,7 +110,7 @@ export default function Profile() {
     <div className="mx-auto max-w-4xl space-y-6">
       <PageHeader eyebrow="Profile & Settings" 
       title={<>Your  <span className="text-[#0BDA51]">preferences</span></>}
-      subtitle="A local profile — it lives in this browser only and is never uploaded anywhere." />
+      subtitle={`Signed in as ${user?.email || 'Google user'}. Your profile and finance data sync to your private Google Drive.`} />
 
       <Section id="profile" title="Personal profile">
         <div className="flex flex-col gap-8 sm:flex-row">
@@ -142,7 +144,7 @@ export default function Profile() {
         </div>
       </Section>
 
-      <Section id="preferences" title="Preferences" description="Stored in your browser and included in backups.">
+      <Section id="preferences" title="Preferences" description="Synced to your private Google Drive and included in downloaded backups.">
         <div className="grid gap-6 sm:grid-cols-2">
           <div><p className="label">Appearance</p><ThemeSegmented /></div>
           <div>
@@ -164,11 +166,11 @@ export default function Profile() {
         </div>
       </Section>
 
-      <Section id="data" title="Data & export" description="Your data stays on this device. Download copies whenever you like.">
+      <Section id="data" title="Data & export" description="Your data syncs to your private Google Drive. Download copies whenever you like.">
         <div className={`mb-6 flex gap-3 rounded-xl border p-4 text-sm ${isPersistent() ? 'border-warn/30 bg-warn/10' : 'border-expense/40 bg-expense/10'}`} role="note">
           <AlertTriangle size={18} className={`mt-0.5 shrink-0 ${isPersistent() ? 'text-warn' : 'text-expense'}`} />
-          <p><strong>{isPersistent() ? 'Stored only in this browser.' : 'Browser storage is unavailable — data will be lost when you close this tab.'}</strong>{' '}
-            <span className="text-muted">Clearing site data, using private browsing or switching browser/device can permanently remove it. Export a JSON backup regularly. There is no cloud sync or account.</span></p>
+          <p><strong>{isPersistent() ? 'Cached in this browser and synced to Google Drive.' : 'Browser storage is unavailable.'}</strong>{' '}
+            <span className="text-muted">{isPersistent() ? 'Google Drive is the synced copy; clearing this browser’s site data will not delete that copy.' : 'Your changes rely on an active Google Drive connection until this tab closes.'} Current sync status: {status === 'error' ? 'needs attention' : status === 'syncing' ? 'saving' : 'up to date'}.</span></p>
         </div>
 
         <p className="label">Full backup</p>
@@ -202,7 +204,7 @@ export default function Profile() {
 
         <p className="label mt-8 !text-expense">Danger zone</p>
         <div className="flex flex-col gap-3 rounded-2xl border border-expense/40 bg-expense/5 p-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm"><strong>Erase all data</strong><span className="block text-xs text-muted">Deletes every transaction, budget, custom category and notification. Your profile and preferences are kept.</span></p>
+          <p className="text-sm"><strong>Erase all data</strong><span className="block text-xs text-muted">Deletes every transaction, budget, custom category and notification from this device and Google Drive. Your profile and preferences are kept.</span></p>
           <button type="button" className="btn-danger !h-10 text-xs" onClick={() => setConfirm('all')}><Trash2 size={15} />Erase everything</button>
         </div>
       </Section>

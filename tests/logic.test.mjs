@@ -15,6 +15,7 @@ import { validateCategoryName } from '../src/services/categoryService.js';
 import { buildBudgetRows, summarizeBudgets } from '../src/services/budgetService.js';
 import { evaluateAlerts } from '../src/services/alertService.js';
 import { buildTransactionsCSV, buildMonthlyReportCSV, buildJSONExport } from '../src/services/exportService.js';
+import { parseDriveBackup } from '../src/services/googleDriveService.js';
 
 const tx = (id, type, amount, date, categoryId = 'c1') => ({ id, type, amount, date, categoryId, description: '', createdAt: `${date}T00:00:00Z`, updatedAt: `${date}T00:00:00Z`, isDemo: false });
 
@@ -246,4 +247,20 @@ test('exports: CSV escaping, injection guard, JSON content', () => {
   const json = JSON.parse(buildJSONExport({ transactions: txs, categories: [], budgets: [], profile: {}, preferences: { theme: 'light' } }));
   assert.equal(json.data.preferences.theme, 'light');
   assert.equal(json.data.transactions.length, 2);
+});
+
+test('Drive backups require a supported version and complete data before restore', () => {
+  const data = {
+    transactions: [], categories: [], budgets: [], notifications: [],
+    profile: {}, preferences: {},
+  };
+  assert.deepEqual(parseDriveBackup({ version: 1, data }), data);
+  assert.throws(
+    () => parseDriveBackup({ version: 2, data }),
+    /invalid or unsupported/,
+  );
+  assert.throws(
+    () => parseDriveBackup({ version: 1, data: { ...data, categories: null } }),
+    /invalid or unsupported/,
+  );
 });

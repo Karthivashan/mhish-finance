@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { toast } from 'sonner';
+import { useGoogleDrive } from './GoogleDriveContext';
 import { budgetAlerts, createBudget, makeNotification, milestoneAlerts, validateBudgets, validateNotifications } from '../services/budgetService';
 import { DEFAULT_CATEGORIES, createCategory, validateCategories } from '../services/categoryService';
 import { buildDemoBudgets, buildDemoTransactions } from '../services/demoData';
@@ -143,6 +144,7 @@ function reducer(state, a) {
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, null, loadState);
   const [month, setMonth] = useState(currentMonthKey);
+  const { saveSnapshot } = useGoogleDrive();
 
   // Persist each slice when it changes.
   useEffect(() => { write(KEYS.transactions, state.transactions); }, [state.transactions]);
@@ -151,6 +153,20 @@ export function AppProvider({ children }) {
   useEffect(() => { write(KEYS.profile, state.profile); }, [state.profile]);
   useEffect(() => { write(KEYS.preferences, state.preferences); }, [state.preferences]);
   useEffect(() => { write(KEYS.notifications, state.notifications); }, [state.notifications]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      saveSnapshot({
+        transactions: state.transactions,
+        categories: state.categories,
+        budgets: state.budgets,
+        profile: state.profile,
+        preferences: state.preferences,
+        notifications: state.notifications,
+      });
+    }, 800);
+    return () => window.clearTimeout(timer);
+  }, [saveSnapshot, state]);
 
   // Keep multiple tabs in sync.
   useEffect(() => {

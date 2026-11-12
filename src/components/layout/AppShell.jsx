@@ -1,7 +1,8 @@
-import { Menu, Plus, X } from 'lucide-react';
+import { Cloud, LoaderCircle, LogOut, Menu, Plus, RefreshCw, X } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import { useGoogleDrive } from '../../context/GoogleDriveContext';
 import NotificationPanel from '../notifications/NotificationPanel';
 import Logo from './Logo';
 import Sidebar from './Sidebar';
@@ -16,10 +17,27 @@ const Loading = () => (
 );
 
 export default function AppShell() {
-  const { preferences, setPrefs } = useApp();
+  const app = useApp();
+  const { preferences, setPrefs } = app;
+  const { user, status, syncError, lastSyncedAt, reconnect, signOut, saveSnapshot } = useGoogleDrive();
   const { pathname } = useLocation();
   const [drawer, setDrawer] = useState(false);
   const collapsed = preferences.sidebarCollapsed;
+  const snapshot = {
+    transactions: app.transactions,
+    categories: app.categories,
+    budgets: app.budgets,
+    profile: app.profile,
+    preferences: app.preferences,
+    notifications: app.notifications,
+  };
+
+  const handleSignOut = async () => {
+    if (await saveSnapshot(snapshot)) signOut();
+  };
+  const handleReconnect = async () => {
+    if (await reconnect()) await saveSnapshot(snapshot);
+  };
 
   useEffect(() => { setDrawer(false); window.scrollTo({ top: 0 }); }, [pathname]);
   useEffect(() => {
@@ -54,6 +72,14 @@ export default function AppShell() {
           <Link to="/" className="lg:hidden" aria-label="Mhish home"><Logo size={30} /></Link>
           <p className="hidden text-sm font-semibold text-muted md:block">Money Handler for Income, Savings and Holdings</p>
           <div className="ml-auto flex items-center gap-2">
+            <button type="button" className="btn-ghost !h-10 !px-2.5 text-xs sm:!px-3" onClick={status === 'error' ? handleReconnect : () => saveSnapshot(snapshot)}
+              disabled={status === 'syncing'} title={syncError || (lastSyncedAt ? `Last synced ${lastSyncedAt.toLocaleTimeString()}` : 'Google Drive sync')}>
+              {status === 'syncing' ? <LoaderCircle size={16} className="animate-spin" /> : status === 'error' ? <RefreshCw size={16} /> : <Cloud size={16} className="text-income" />}
+              <span className="hidden sm:inline">{status === 'syncing' ? 'Saving…' : status === 'error' ? 'Retry sync' : 'Drive synced'}</span>
+            </button>
+            <button type="button" className="btn-ghost !h-10 !px-2.5 text-xs sm:!px-3" onClick={handleSignOut} title={`Signed in as ${user?.email || 'Google user'}`}>
+              <LogOut size={16} /><span className="hidden sm:inline">Sign out</span>
+            </button>
             <ThemeIconButton />
             <NotificationPanel />
             <Link to="/spend/new/expense" className="btn-primary !px-3.5 sm:!px-4" aria-label="Add transaction"><Plus size={18} /><span className="hidden sm:inline">Add transaction</span></Link>
