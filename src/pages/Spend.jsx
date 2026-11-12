@@ -57,29 +57,31 @@ export default function Spend() {
       </div>
 
       <section id="tab-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="card flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-line/60 p-4 sm:gap-4 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="eyebrow">{scope === 'month' ? monthLabel : 'All time'} · {income ? 'Total income' : 'Total expenses'}</p>
-            <p className={`mt-1 text-3xl font-extrabold tracking-tight tnum ${income ? 'text-income' : 'text-expense'}`}>{formatINR(total)}</p>
-            <p className="text-xs text-muted">{rows.length} {rows.length === 1 ? 'transaction' : 'transactions'}</p>
+        <div className="flex flex-col gap-2 border-b border-line/60 p-3 sm:gap-4 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 items-center justify-between gap-2 sm:block">
+            <div className="min-w-0">
+              <p className="eyebrow truncate">{scope === 'month' ? monthLabel : 'All time'} · {income ? 'Total income' : 'Total expenses'}</p>
+              <p className={`mt-0.5 text-2xl font-extrabold tracking-tight tnum sm:mt-1 sm:text-3xl ${income ? 'text-income' : 'text-expense'}`}>{formatINR(total)}</p>
+            </div>
+            <p className="shrink-0 text-right text-xs text-muted sm:text-left">{rows.length} {rows.length === 1 ? 'transaction' : 'transactions'}</p>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-            <div className="-mx-1 overflow-x-auto px-1">
-              <div className="inline-flex min-w-full w-max gap-1 rounded-xl border border-line bg-bg/40 p-1" role="group" aria-label="Date range">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="shrink-0">
+              <div className="inline-flex w-auto gap-0.5 rounded-xl border border-line bg-bg/40 p-1 sm:gap-1" role="group" aria-label="Date range">
                 {[['month', 'This month'], ['all', 'All time']].map(([k, l]) => (
                   <button key={k} type="button" aria-pressed={scope === k} onClick={() => setScope(k)}
-                    className={`h-9 shrink-0 whitespace-nowrap rounded-lg px-4 text-xs font-bold transition ${scope === k ? 'bg-raised text-ink shadow' : 'text-muted hover:text-ink'}`}>{k === 'month' ? 'Month' : l}</button>
+                    className={`h-9 shrink-0 whitespace-nowrap rounded-lg px-2 text-[11px] font-bold transition sm:px-4 sm:text-xs ${scope === k ? 'bg-raised text-ink shadow' : 'text-muted hover:text-ink'}`}>{k === 'month' ? 'Month' : l}</button>
                 ))}
               </div>
             </div>
-            <div className="relative">
+            <div className="relative min-w-0 flex-1">
               <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
               <label htmlFor="tx-search" className="sr-only">Search transactions</label>
-              <input id="tx-search" type="search" className="field !pl-10 sm:w-60" placeholder="Search description or category" value={query} onChange={(e) => setQuery(e.target.value)} />
+              <input id="tx-search" type="search" className="field !h-10 min-w-0 !pl-10 sm:w-60" placeholder="Search transactions" value={query} onChange={(e) => setQuery(e.target.value)} />
             </div>
           </div>
         </div>
-        {scope === 'month' && <div className="border-b border-line/60 px-4 py-2 sm:px-6 sm:py-3"><MonthSelector /></div>}
+        {scope === 'month' && <div className="border-b border-line/60 px-3 py-1.5 sm:px-6 sm:py-3"><MonthSelector /></div>}
 
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-1.5 sm:p-4">
           {rows.length === 0 ? (
