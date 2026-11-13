@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { LoaderCircle } from 'lucide-react';
 import { Toaster } from 'sonner';
 import App from './App';
 import { AppProvider } from './context/AppContext';
@@ -15,7 +16,14 @@ function ThemedToaster() {
 }
 
 function AuthenticatedApp() {
-  const { user } = useGoogleDrive();
+  const { user, authLoading } = useGoogleDrive();
+  if (authLoading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-bg text-muted" aria-label="Restoring your Google session">
+        <LoaderCircle size={28} className="animate-spin" />
+      </main>
+    );
+  }
   if (!user) return <GoogleLogin />;
 
   return (

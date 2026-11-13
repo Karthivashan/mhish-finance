@@ -4,6 +4,7 @@ import { getGoogleUser, loadDriveBackup, saveDriveBackup } from '../services/goo
 
 const GoogleDriveContext = createContext(null);
 const LAST_ACCOUNT_KEY = 'expense_tracker_google_account';
+const SESSION_ACCOUNT_KEY = 'expense_tracker_google_session';
 const GOOGLE_SCRIPT_ID = 'google-identity-services';
 const GOOGLE_SCRIPT_URL = 'https://accounts.google.com/gsi/client';
 const GOOGLE_SCOPES = 'openid email profile https://www.googleapis.com/auth/drive.appdata';
@@ -87,8 +88,34 @@ function rememberAccount(email) {
   }
 }
 
+function getSessionAccount() {
+  try {
+    const account = JSON.parse(window.sessionStorage.getItem(SESSION_ACCOUNT_KEY) || 'null');
+    return account?.email ? account : null;
+  } catch {
+    return null;
+  }
+}
+
+function rememberSession(account) {
+  try {
+    window.sessionStorage.setItem(SESSION_ACCOUNT_KEY, JSON.stringify(account));
+  } catch {
+    // The active session remains usable even if session storage is unavailable.
+  }
+}
+
+function clearSession() {
+  try {
+    window.sessionStorage.removeItem(SESSION_ACCOUNT_KEY);
+  } catch {
+    // Signing out still clears the in-memory credentials.
+  }
+}
+
 export function GoogleDriveProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [status, setStatus] = useState('disconnected');
   const [syncError, setSyncError] = useState('');
   const [identityReady, setIdentityReady] = useState(false);
@@ -98,6 +125,7 @@ export function GoogleDriveProvider({ children }) {
   const fileIdRef = useRef(null);
   const lastAccountRef = useRef('');
   const saveQueueRef = useRef(Promise.resolve());
+  const authBootstrapStarted = useRef(false);
 
   const prepareGoogleIdentity = useCallback(async () => {
     setIdentityLoading(true);
@@ -114,13 +142,49 @@ export function GoogleDriveProvider({ children }) {
     }
   }, []);
 
-  useEffect(() => { prepareGoogleIdentity(); }, [prepareGoogleIdentity]);
-
   const authorize = useCallback(async (prompt) => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
     if (!clientId) throw new Error('Google sign-in is not configured. Set VITE_GOOGLE_CLIENT_ID and restart the app.');
     return requestAccessToken(clientId, prompt);
   }, []);
+
+  useEffect(() => {
+    if (authBootstrapStarted.current) return;
+    authBootstrapStarted.current = true;
+
+    const restoreSession = async () => {
+      try {
+        await loadGoogleIdentity();
+        setIdentityReady(true);
+        const savedAccount = getSessionAccount();
+        if (!savedAccount) return;
+
+        const token = await authorize('');
+        const account = await getGoogleUser(token);
+        if (account.email.toLowerCase() !== savedAccount.email.toLowerCase()) {
+          throw new Error('The active Google account changed. Sign in again to continue.');
+        }
+
+        const backup = await loadDriveBackup(token);
+        if (backup.data) restoreSnapshot(backup.data);
+        tokenRef.current = token;
+        fileIdRef.current = backup.fileId;
+        lastAccountRef.current = account.email;
+        rememberAccount(account.email);
+        setUser(account);
+        setStatus('connected');
+        setLastSyncedAt(new Date());
+      } catch (error) {
+        setStatus('disconnected');
+        setSyncError(error.message || 'Could not restore your Google session. Please sign in again.');
+      } finally {
+        setAuthLoading(false);
+        setIdentityLoading(false);
+      }
+    };
+
+    restoreSession();
+  }, [authorize]);
 
   const connect = useCallback(async () => {
     setStatus('connecting');
@@ -143,6 +207,7 @@ export function GoogleDriveProvider({ children }) {
       lastAccountRef.current = account.email;
       tokenRef.current = token;
       fileIdRef.current = backup.fileId || fileIdRef.current;
+      rememberSession(account);
       setUser(account);
       setStatus('connected');
       setLastSyncedAt(new Date());
@@ -170,6 +235,7 @@ export function GoogleDriveProvider({ children }) {
   }, [authorize]);
 
   const signOut = useCallback(() => {
+    clearSession();
     tokenRef.current = null;
     fileIdRef.current = null;
     setUser(null);
@@ -199,9 +265,9 @@ export function GoogleDriveProvider({ children }) {
   }, []);
 
   const value = useMemo(() => ({
-    user, status, syncError, identityReady, identityLoading, lastSyncedAt,
+    user, authLoading, status, syncError, identityReady, identityLoading, lastSyncedAt,
     connect, prepareGoogleIdentity, reconnect, signOut, saveSnapshot,
-  }), [user, status, syncError, identityReady, identityLoading, lastSyncedAt, connect, prepareGoogleIdentity, reconnect, signOut, saveSnapshot]);
+  }), [user, authLoading, status, syncError, identityReady, identityLoading, lastSyncedAt, connect, prepareGoogleIdentity, reconnect, signOut, saveSnapshot]);
   return <GoogleDriveContext.Provider value={value}>{children}</GoogleDriveContext.Provider>;
 }
 
