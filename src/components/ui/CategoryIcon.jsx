@@ -11,12 +11,19 @@ export const ICONS = {
 };
 
 /** Tinted rounded-square badge — the one visual identity for a category everywhere in the app. */
-export default function CategoryIcon({ name, color = '#8B9BB4', size = 40, className = '' }) {
+export default function CategoryIcon({ name, color = '#8B9BB4', size = 40, className = '', neutral = false }) {
   const Icon = ICONS[name] || Tag;
   return (
     <span
       className={`inline-flex shrink-0 items-center justify-center rounded-xl ${className}`}
-      style={{ width: size, height: size, background: `${color}26`, color, boxShadow: `inset 0 0 0 1px ${color}33` }}
+      style={{
+        width: size,
+        height: size,
+        background: neutral ? '#29292B' : `${color}26`,
+        color: neutral ? '#F5F5F5' : color,
+        boxShadow: neutral ? 'none' : `inset 0 0 0 1px ${color}33`,
+        borderRadius: neutral ? '9999px' : undefined,
+      }}
       aria-hidden="true"
     >
       <Icon size={Math.round(size * 0.5)} strokeWidth={2} />

@@ -1,10 +1,18 @@
 import { ArrowDownLeft, ArrowUpRight, Pencil, Trash2 } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import { formatINR } from '../../utils/currencyUtils';
+import { formatINR, sumMoney } from '../../utils/currencyUtils';
 import CategoryIcon from '../ui/CategoryIcon';
 import { ConfirmDialog } from '../ui/Dialog';
+
+const historyAmount = (amount) => formatINR(amount).replace(/\.00$/, '');
+
+function transactionTime(tx) {
+  const date = new Date(tx.createdAt);
+  return Number.isNaN(date.getTime()) ? '' : format(date, 'HH:mm');
+}
 
 export function TransactionRow({ tx, actions = true, onDelete, compact = false }) {
   const { getCategory, fmtDate } = useApp();
@@ -41,14 +49,78 @@ export function TransactionRow({ tx, actions = true, onDelete, compact = false }
   );
 }
 
+export function DateHeader({ date, total, id }) {
+  return (
+    <div className="mb-3 flex items-center justify-between gap-3 px-1 text-[#F5F5F5]">
+      <h2 id={id} className="text-xl font-semibold tracking-tight sm:text-2xl">{format(parseISO(date), 'MMM d EEE')}</h2>
+      <p className="flex items-center gap-1 whitespace-nowrap text-lg font-semibold tnum sm:text-xl">
+        <ArrowUpRight size={18} className="text-[#FF343F]" aria-hidden />
+        <span>{historyAmount(total)}</span>
+      </p>
+    </div>
+  );
+}
+
+function HistoryRow({ tx, actions, onDelete }) {
+  const { getCategory } = useApp();
+  const navigate = useNavigate();
+  const cat = getCategory(tx.categoryId);
+  const income = tx.type === 'income';
+  const time = transactionTime(tx);
+
+  return (
+    <div className="relative flex min-w-0 items-center gap-3 py-3.5 first:pt-1 last:pb-1 sm:gap-4 sm:py-4">
+      <CategoryIcon name={cat.icon} size={80} neutral className="!rounded-full sm:!h-[88px] sm:!w-[88px]" />
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-lg font-bold uppercase tracking-wide text-[#F5F5F5] sm:text-xl">{cat.name}</p>
+        <p className="mt-1 truncate text-base text-[#AAAAAA] sm:mt-1.5">{tx.description || 'No description'}</p>
+      </div>
+      <div className="flex shrink-0 flex-col items-end">
+        <span className="whitespace-nowrap text-lg font-semibold text-[#F5F5F5] tnum sm:text-xl">
+          {income ? '+' : '−'}{historyAmount(tx.amount)}
+        </span>
+        {time && <span className="mt-1 text-base text-[#AAAAAA] tnum">{time}</span>}
+        {actions && (
+          <div className="mt-1 flex gap-1">
+            <button type="button" className="btn-icon !h-7 !w-7 !rounded-lg !border-transparent !text-[#AAAAAA] hover:!text-[#F5F5F5]" aria-label={`Edit ${cat.name} transaction`} onClick={() => navigate(`/spend/edit/${tx.id}`)}><Pencil size={13} /></button>
+            <button type="button" className="btn-icon !h-7 !w-7 !rounded-lg !border-transparent !text-[#AAAAAA] hover:!border-[#FF343F]/50 hover:!text-[#FF343F]" aria-label={`Delete ${cat.name} transaction`} onClick={() => onDelete(tx)}><Trash2 size={13} /></button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function TransactionCard({ date, transactions, actions, onDelete }) {
+  return (
+    <section aria-labelledby={`date-${date}`}>
+      <DateHeader id={`date-${date}`} date={date} total={sumMoney(transactions.map((tx) => tx.amount))} />
+      <ul className="rounded-[28px] bg-[#1E1E20] px-3 py-3 sm:px-4 sm:py-4">
+        {transactions.map((tx, index) => (
+          <li key={tx.id} className={index ? 'border-t border-[#393939]' : ''}>
+            <HistoryRow tx={tx} actions={actions} onDelete={onDelete} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export default function TransactionList({ transactions }) {
   const { deleteTransaction, getCategory } = useApp();
   const [target, setTarget] = useState(null);
+  const groups = [];
+  transactions.forEach((tx) => {
+    const last = groups[groups.length - 1];
+    if (last?.date === tx.date) last.transactions.push(tx);
+    else groups.push({ date: tx.date, transactions: [tx] });
+  });
+
   return (
     <>
-      <ul className="space-y-2 divide-y-0 sm:space-y-0 sm:divide-y sm:divide-line/50">
-        {transactions.map((tx) => <TransactionRow key={tx.id} tx={tx} onDelete={setTarget} />)}
-      </ul>
+      <div className="space-y-5 px-2 py-2 sm:space-y-6 sm:px-3 sm:py-3">
+        {groups.map((group) => <TransactionCard key={group.date} {...group} actions onDelete={setTarget} />)}
+      </div>
       <ConfirmDialog open={!!target} onClose={() => setTarget(null)}
         title="Delete this transaction?"
         description={target ? `${getCategory(target.categoryId).name} · ${formatINR(target.amount)} — balances, budgets and charts will be recalculated. This can’t be undone.` : ''}
