@@ -70,7 +70,7 @@ function HistoryRow({ tx, actions, onDelete }) {
 
   return (
     <div className="relative flex min-w-0 items-center gap-3 py-3.5 first:pt-1 last:pb-1 sm:gap-4 sm:py-4">
-      <CategoryIcon name={cat.icon} size={30} neutral className="!rounded-full sm:!h-9 sm:!w-9" />
+      <CategoryIcon name={cat.icon} color={cat.color} size={30} className="!rounded-full sm:!h-9 sm:!w-9" />
       <div className="min-w-0 flex-1">
         <p className="truncate text-[10px] font-bold uppercase tracking-wide text-[#F5F5F5] sm:text-base">{cat.name}</p>
         <p className="mt-1 truncate text-[8px] text-[#AAAAAA] sm:mt-1.5 sm:text-sm">{tx.description || 'No description'}</p>
