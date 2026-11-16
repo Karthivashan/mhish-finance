@@ -52,8 +52,8 @@ export function TransactionRow({ tx, actions = true, onDelete, compact = false }
 export function DateHeader({ date, total, id }) {
   return (
     <div className="mb-3 flex items-center justify-between gap-3 px-1 text-[#F5F5F5]">
-      <h2 id={id} className="text-[9px] font-semibold tracking-tight sm:text-base">{format(parseISO(date), 'MMM d EEE')}</h2>
-      <p className="flex items-center gap-1 whitespace-nowrap text-[9px] font-semibold tnum sm:text-sm">
+      <h2 id={id} className="text-[8px] font-semibold tracking-tight sm:text-base">{format(parseISO(date), 'MMM d EEE')}</h2>
+      <p className="flex items-center gap-1 whitespace-nowrap text-[8px] font-semibold tnum sm:text-sm">
         <ArrowUpRight size={12} className="text-[#FF343F] sm:h-4 sm:w-4" aria-hidden />
         <span>{historyAmount(total)}</span>
       </p>
@@ -72,14 +72,14 @@ function HistoryRow({ tx, actions, onDelete }) {
     <div className="relative flex min-w-0 items-center gap-3 py-3.5 first:pt-1 last:pb-1 sm:gap-4 sm:py-4">
       <CategoryIcon name={cat.icon} color={cat.color} size={30} className="!rounded-full sm:!h-9 sm:!w-9" />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[9px] font-bold uppercase tracking-wide text-[#F5F5F5] sm:text-base">{cat.name}</p>
-        <p className="mt-1 truncate text-[9px] text-[#AAAAAA] sm:mt-1.5 sm:text-sm">{tx.description || 'No description'}</p>
+        <p className="truncate text-[8px] font-bold uppercase tracking-wide text-[#F5F5F5] sm:text-base">{cat.name}</p>
+        <p className="mt-1 truncate text-[8px] text-[#AAAAAA] sm:mt-1.5 sm:text-sm">{tx.description || 'No description'}</p>
       </div>
       <div className="flex shrink-0 flex-col items-end">
-        <span className="whitespace-nowrap text-[9px] font-semibold text-[#F5F5F5] tnum sm:text-base">
+        <span className="whitespace-nowrap text-[8px] font-semibold text-[#F5F5F5] tnum sm:text-base">
           {income ? '+' : '−'}{historyAmount(tx.amount)}
         </span>
-        {time && <span className="mt-1 text-[9px] text-[#AAAAAA] tnum sm:text-sm">{time}</span>}
+        {time && <span className="mt-1 text-[8px] text-[#AAAAAA] tnum sm:text-sm">{time}</span>}
         {actions && (
           <div className="mt-1 flex gap-1">
             <button type="button" className="btn-icon !h-7 !w-7 !rounded-lg !border-transparent !text-[#AAAAAA] hover:!text-[#F5F5F5]" aria-label={`Edit ${cat.name} transaction`} onClick={() => navigate(`/spend/edit/${tx.id}`)}><Pencil size={13} /></button>
