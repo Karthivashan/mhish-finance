@@ -93,12 +93,12 @@ const AmountInput = forwardRef(function AmountInput({ value, onChange, onBlur, n
   return (
     <div className="space-y-2">
       <div className={`flex items-center gap-2 rounded-2xl border bg-bg/40 transition focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/30 ${compact ? 'px-3 py-2 sm:px-5 sm:py-4' : 'px-4 py-3 sm:px-5 sm:py-4'} ${invalid ? 'border-expense' : 'border-line'}`}>
-        <span className={`${compact ? 'text-xl sm:text-3xl' : 'text-2xl sm:text-3xl'} font-extrabold ${tone}`} aria-hidden="true">₹</span>
+        <span className={`${compact ? 'text-[9px] sm:text-3xl' : 'text-2xl sm:text-3xl'} font-extrabold ${tone}`} aria-hidden="true">₹</span>
         <input ref={ref} id="amount" name={name}
           onBlur={() => { if (value !== '' && value != null && Number.isFinite(parseFloat(value))) onChange(parseFloat(value).toFixed(2)); onBlur?.(); }} inputMode="decimal" autoComplete="off" placeholder="0.00"
           aria-invalid={invalid} aria-describedby={describedBy}
           value={displayAmountInput(value)} onChange={(e) => onChange(sanitizeAmountInput(e.target.value.replace(/,/g, '')))}
-          className={`w-full min-w-0 bg-transparent font-extrabold tracking-tight tnum outline-none placeholder:text-muted/40 ${compact ? 'text-xl sm:text-3xl' : 'text-2xl sm:text-3xl'}`} />
+          className={`w-full min-w-0 bg-transparent font-extrabold tracking-tight tnum outline-none placeholder:text-muted/40 ${compact ? 'text-[9px] sm:text-3xl' : 'text-2xl sm:text-3xl'}`} />
         {calculator && (
           <button type="button" aria-label={calculatorOpen ? 'Close amount calculator' : 'Open amount calculator'} aria-expanded={calculatorOpen} aria-controls="amount-calculator"
             onClick={calculatorOpen ? () => setCalculatorOpen(false) : openCalculator}
@@ -109,24 +109,24 @@ const AmountInput = forwardRef(function AmountInput({ value, onChange, onBlur, n
       </div>
       {calculatorOpen && (
         <div id="amount-calculator" className="max-w-xs rounded-xl border border-line bg-surface p-3 shadow-card">
-          <div className="mb-2 rounded-lg bg-bg/60 px-3 py-2 text-right text-lg font-bold tnum" aria-live="polite">
+          <div className={`mb-2 rounded-lg bg-bg/60 px-3 py-2 text-right font-bold tnum ${compact ? 'text-[9px] sm:text-lg' : 'text-lg'}`} aria-live="polite">
             {displayAmountInput(display)}
           </div>
           <div className="grid grid-cols-4 gap-1.5">
-            <button type="button" onClick={clearCalculator} className="h-9 rounded-lg bg-raised text-xs font-bold hover:bg-raised/70">AC</button>
+            <button type="button" onClick={clearCalculator} className={`h-9 rounded-lg bg-raised font-bold hover:bg-raised/70 ${compact ? 'text-[9px] sm:text-xs' : 'text-xs'}`}>AC</button>
             <button type="button" aria-label="Delete last digit" onClick={() => { setDisplay((current) => replaceNext ? '0' : current.slice(0, -1) || '0'); setReplaceNext(false); setCalculatorError(''); }}
               className="flex h-9 items-center justify-center rounded-lg bg-raised hover:bg-raised/70"><Delete size={15} /></button>
-            <button type="button" aria-label="Divide" onClick={() => enterOperator('/')} className="h-9 rounded-lg bg-accent/15 text-sm font-semibold text-accent transition hover:bg-raised">÷</button>
-            <button type="button" aria-label="Multiply" onClick={() => enterOperator('*')} className="h-9 rounded-lg bg-accent/15 text-sm font-semibold text-accent transition hover:bg-raised">×</button>
+            <button type="button" aria-label="Divide" onClick={() => enterOperator('/')} className={`h-9 rounded-lg bg-accent/15 font-semibold text-accent transition hover:bg-raised ${compact ? 'text-[9px] sm:text-sm' : 'text-sm'}`}>÷</button>
+            <button type="button" aria-label="Multiply" onClick={() => enterOperator('*')} className={`h-9 rounded-lg bg-accent/15 font-semibold text-accent transition hover:bg-raised ${compact ? 'text-[9px] sm:text-sm' : 'text-sm'}`}>×</button>
             {[['7', '7'], ['8', '8'], ['9', '9'], ['−', '-'], ['4', '4'], ['5', '5'], ['6', '6'], ['+', '+'], ['1', '1'], ['2', '2'], ['3', '3'], ['=', '=']].map(([label, key]) => (
               <button key={key} type="button" onClick={() => ['+', '-', '*', '/'].includes(key) ? enterOperator(key) : key === '=' ? evaluate() : enterDigit(key)}
-                className={`h-9 rounded-lg text-sm font-semibold transition hover:bg-raised ${['+', '-', '*', '/', '='].includes(key) ? 'bg-accent/15 text-accent' : 'bg-bg/60'}`}>{label}</button>
+                className={`h-9 rounded-lg font-semibold transition hover:bg-raised ${compact ? 'text-[9px] sm:text-sm' : 'text-sm'} ${['+', '-', '*', '/', '='].includes(key) ? 'bg-accent/15 text-accent' : 'bg-bg/60'}`}>{label}</button>
             ))}
-            <button type="button" onClick={() => enterDigit('0')} className="col-span-2 h-9 rounded-lg bg-bg/60 text-sm font-semibold hover:bg-raised">0</button>
-            <button type="button" onClick={() => enterDigit('.')} className="h-9 rounded-lg bg-bg/60 text-sm font-semibold hover:bg-raised">.</button>
+            <button type="button" onClick={() => enterDigit('0')} className={`col-span-2 h-9 rounded-lg bg-bg/60 font-semibold hover:bg-raised ${compact ? 'text-[9px] sm:text-sm' : 'text-sm'}`}>0</button>
+            <button type="button" onClick={() => enterDigit('.')} className={`h-9 rounded-lg bg-bg/60 font-semibold hover:bg-raised ${compact ? 'text-[9px] sm:text-sm' : 'text-sm'}`}>.</button>
           </div>
-          {calculatorError && <p role="alert" className="mt-2 text-xs font-semibold text-expense">{calculatorError}</p>}
-          <button type="button" onClick={useCalculatorResult} className="mt-2 h-9 w-full rounded-lg bg-accent text-xs font-bold text-accent-ink hover:brightness-110">Use amount</button>
+          {calculatorError && <p role="alert" className={`mt-2 font-semibold text-expense ${compact ? 'text-[9px] sm:text-xs' : 'text-xs'}`}>{calculatorError}</p>}
+          <button type="button" onClick={useCalculatorResult} className={`mt-2 h-9 w-full rounded-lg bg-accent font-bold text-accent-ink hover:brightness-110 ${compact ? 'text-[9px] sm:text-xs' : 'text-xs'}`}>Use amount</button>
         </div>
       )}
     </div>

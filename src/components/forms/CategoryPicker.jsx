@@ -64,29 +64,29 @@ export default function CategoryPicker({ type, value, onChange, error }) {
               style={on ? { boxShadow: `0 0 0 2px ${c.color}, 0 10px 24px -14px ${c.color}` } : undefined}>
               {on && <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full text-white" style={{ background: c.color }}><Check size={12} strokeWidth={3} /></span>}
               <CategoryIcon name={c.icon} color={c.color} size={36} className="sm:!h-[46px] sm:!w-[46px]" />
-              <span className="w-full truncate text-sm font-bold">{c.name}</span>
+              <span className="w-full truncate text-[9px] font-bold sm:text-sm">{c.name}</span>
             </button>
           );
         })}
         <button type="button" onClick={() => setAdding((a) => !a)} aria-expanded={adding}
           className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line p-2 text-muted transition hover:border-accent hover:text-accent sm:gap-2.5 sm:p-4">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-raised sm:h-[46px] sm:w-[46px]"><Plus size={22} /></span>
-          <span className="text-sm font-bold">Add new</span>
+          <span className="text-[9px] font-bold sm:text-sm">Add new</span>
         </button>
       </div>
-      {error && <p role="alert" className="mt-2 text-xs font-semibold text-expense">{error}</p>}
+      {error && <p role="alert" className="mt-2 text-[9px] font-semibold text-expense sm:text-xs">{error}</p>}
 
       {adding && (
         <div className="mt-4 animate-pop-in space-y-5 rounded-2xl border border-line bg-bg/40 p-5">
           <div className="flex items-center gap-3">
             <CategoryIcon name={icon} color={color} size={48} />
             <div className="flex-1">
-              <label htmlFor="new-cat-name" className="label">New {type} category</label>
-              <input id="new-cat-name" className="field" value={name} maxLength={24} placeholder="e.g. Groceries" aria-invalid={!!nameError}
+              <label htmlFor="new-cat-name" className="label !text-[9px] sm:!text-[11px]">New {type} category</label>
+              <input id="new-cat-name" className="field !text-[9px] sm:!text-sm" value={name} maxLength={24} placeholder="e.g. Groceries" aria-invalid={!!nameError}
                 onChange={(e) => { setName(e.target.value); setNameError(''); }} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); create(); } }} />
             </div>
           </div>
-          {nameError && <p role="alert" className="-mt-3 text-xs font-semibold text-expense">{nameError}</p>}
+          {nameError && <p role="alert" className="-mt-3 text-[9px] font-semibold text-expense sm:text-xs">{nameError}</p>}
           <IconColorFields icon={icon} color={color} onIcon={setIcon} onColor={setColor} idPrefix="pick" />
           <div className="flex justify-end gap-2">
             <button type="button" className="btn-ghost" onClick={() => setAdding(false)}>Cancel</button>

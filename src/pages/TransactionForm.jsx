@@ -54,15 +54,15 @@ function Form({ type, editing }) {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link to={`/spend?tab=${type}`} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-muted hover:text-ink"><ArrowLeft size={16} />Back to Spend</Link>
+      <Link to={`/spend?tab=${type}`} className="mb-5 inline-flex items-center gap-2 text-[9px] font-semibold text-muted hover:text-ink sm:text-sm"><ArrowLeft size={16} />Back to Spend</Link>
       {income && (
         <div className="mb-7 flex items-center gap-4">
           <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-income/15 text-income">
             <ArrowDownLeft size={24} />
           </span>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight sm:text-[28px]">{editing ? 'Edit' : 'New'} income</h1>
-            <p className="text-xs text-muted sm:text-sm">Money coming in — it will increase your balance.</p>
+            <h1 className="text-[9px] font-extrabold tracking-tight sm:text-[28px]">{editing ? 'Edit' : 'New'} income</h1>
+            <p className="text-[9px] text-muted sm:text-sm">Money coming in — it will increase your balance.</p>
           </div>
         </div>
       )}
@@ -71,14 +71,14 @@ function Form({ type, editing }) {
         <div role="group" aria-label="Transaction type" className="mb-6 grid grid-cols-2 gap-1 rounded-xl border border-line bg-bg/40 p-1">
           {['income', 'expense'].map((t) => (
             <Link key={t} to={`/spend/new/${t}`} replace aria-current={type === t ? 'page' : undefined}
-              className={`flex h-10 items-center justify-center rounded-lg text-sm font-bold capitalize transition ${type === t ? 'bg-accent text-accent-ink shadow' : 'text-muted hover:text-ink'}`}>{t}</Link>
+              className={`flex h-10 items-center justify-center rounded-lg text-[9px] font-bold capitalize transition sm:text-sm ${type === t ? 'bg-accent text-accent-ink shadow' : 'text-muted hover:text-ink'}`}>{t}</Link>
           ))}
         </div>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="card space-y-4 p-3 sm:space-y-8 sm:p-8">
         <div>
-          <label htmlFor="amount" className="label !mb-1">Amount</label>
+          <label htmlFor="amount" className="label !mb-1 !text-[9px] sm:!text-[11px]">Amount</label>
           <Controller name="amount" control={control}
             rules={{
               required: 'Enter an amount.',
@@ -90,34 +90,34 @@ function Form({ type, editing }) {
               },
             }}
             render={({ field }) => <AmountInput {...field} invalid={!!errors.amount} describedBy="amount-error" tone={income ? 'text-income' : 'text-expense'} calculator compact />} />
-          {errors.amount && <p id="amount-error" role="alert" className="mt-2 text-xs font-semibold text-expense">{errors.amount.message}</p>}
+          {errors.amount && <p id="amount-error" role="alert" className="mt-2 text-[9px] font-semibold text-expense sm:text-xs">{errors.amount.message}</p>}
         </div>
 
         <div className="grid gap-3 sm:grid-cols-[1fr_220px] sm:gap-6">
           <div>
-            <label htmlFor="description" className="label !mb-1">Description <span className="font-medium normal-case tracking-normal">(optional)</span></label>
-            <textarea id="description" rows={2} className="field !h-auto resize-none py-2 text-sm leading-snug" placeholder={income ? 'e.g. November salary credited' : 'e.g. Groceries for the week'}
+            <label htmlFor="description" className="label !mb-1 !text-[9px] sm:!text-[11px]">Description <span className="font-medium normal-case tracking-normal">(optional)</span></label>
+            <textarea id="description" rows={2} className="field !h-auto resize-none py-2 !text-[9px] leading-snug sm:!text-sm" placeholder={income ? 'e.g. November salary credited' : 'e.g. Groceries for the week'}
               aria-invalid={!!errors.description} aria-describedby="desc-help"
               {...register('description', { maxLength: { value: 300, message: 'Keep the description under 300 characters.' } })} />
-            <p id="desc-help" className={`mt-1.5 text-right text-xs tnum ${desc.length > 300 ? 'font-bold text-expense' : 'text-muted'}`}>{errors.description?.message || `${desc.length}/300`}</p>
+            <p id="desc-help" className={`mt-1.5 text-right text-[9px] tnum sm:text-xs ${desc.length > 300 ? 'font-bold text-expense' : 'text-muted'}`}>{errors.description?.message || `${desc.length}/300`}</p>
           </div>
           <div>
-            <label htmlFor="date" className="label !mb-1">Date</label>
-            <input id="date" type="date" className="field" min="2000-01-01" max="2100-12-31" aria-invalid={!!errors.date} aria-describedby="date-error"
+            <label htmlFor="date" className="label !mb-1 !text-[9px] sm:!text-[11px]">Date</label>
+            <input id="date" type="date" className="field !text-[9px] sm:!text-sm" min="2000-01-01" max="2100-12-31" aria-invalid={!!errors.date} aria-describedby="date-error"
               {...register('date', { required: 'Pick a date.', validate: (v) => isValidISODate(v) || 'Enter a valid date.' })} />
-            {errors.date && <p id="date-error" role="alert" className="mt-2 text-xs font-semibold text-expense">{errors.date.message}</p>}
+            {errors.date && <p id="date-error" role="alert" className="mt-2 text-[9px] font-semibold text-expense sm:text-xs">{errors.date.message}</p>}
           </div>
         </div>
 
         <div>
-          <p className="label !mb-1">Category</p>
+          <p className="label !mb-1 !text-[9px] sm:!text-[11px]">Category</p>
           <Controller name="categoryId" control={control} rules={{ required: 'Choose a category.' }}
             render={({ field }) => <CategoryPicker type={type} value={field.value} onChange={field.onChange} error={errors.categoryId?.message} />} />
         </div>
 
         <div className="flex flex-col-reverse gap-3 border-t border-line/60 pt-4 sm:flex-row sm:justify-end sm:pt-6">
-          <button type="button" className="btn-ghost sm:min-w-32" onClick={() => navigate(`/spend?tab=${type}`)}>Cancel</button>
-          <button type="submit" className="btn-primary sm:min-w-48" disabled={isSubmitting}><Save size={17} />{editing ? 'Save changes' : 'Save Transaction'}</button>
+          <button type="button" className="btn-ghost !text-[9px] sm:min-w-32 sm:!text-sm" onClick={() => navigate(`/spend?tab=${type}`)}>Cancel</button>
+          <button type="submit" className="btn-primary !text-[9px] sm:min-w-48 sm:!text-sm" disabled={isSubmitting}><Save size={17} />{editing ? 'Save changes' : 'Save Transaction'}</button>
         </div>
       </form>
     </div>
