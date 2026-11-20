@@ -4,7 +4,19 @@ import { displayAmountInput } from '../../utils/currencyUtils';
 
 const MAX_AMOUNT = 999999999.99;
 
-export default function AmountInput({ value, onChange, invalid, describedBy }) {
+export function AmountDisplay({ value, invalid, describedBy }) {
+  const formatted = displayAmountInput(value === '' || value == null ? '0' : String(value)) || '0';
+  return (
+    <div className={`flex h-10 w-fit min-w-[112px] max-w-[58%] shrink-0 items-center justify-end gap-1 rounded-xl bg-[#1D1824] px-2 ${invalid ? 'text-[#FF756B]' : 'text-white'}`}
+      aria-live="polite" aria-invalid={invalid} aria-describedby={describedBy} aria-label={`Current amount ₹${formatted}`}>
+      <span className="shrink-0 text-[14px] font-medium leading-none">₹</span>
+      <span className="min-w-0 truncate text-[clamp(12px,4vw,18px)] font-semibold leading-none tracking-tight tabular-nums">{formatted}</span>
+      <span className="shrink-0 text-[8px] font-semibold tracking-wider text-white/40">INR</span>
+    </div>
+  );
+}
+
+export default function AmountInput({ value, onChange }) {
   const [accumulator, setAccumulator] = useState(null);
   const [operator, setOperator] = useState(null);
   const [replaceNext, setReplaceNext] = useState(value !== '' && value != null);
@@ -109,19 +121,11 @@ export default function AmountInput({ value, onChange, invalid, describedBy }) {
 
   return (
     <div>
-      <div className={`mb-2 flex min-h-12 items-baseline justify-center gap-2 text-center ${invalid ? 'text-[#FF756B]' : 'text-white'}`}
-        aria-live="polite" aria-invalid={invalid} aria-describedby={describedBy}>
-        <span className="text-[30px] font-medium leading-none">₹</span>
-        <span className="max-w-[72vw] truncate text-[32px] font-semibold leading-none tracking-tight tabular-nums sm:text-[38px]">
-          {displayAmountInput(current) || '0'}
-        </span>
-        <span className="text-[10px] font-semibold tracking-wider text-white/40">INR</span>
-      </div>
-      <div className="grid grid-cols-4 gap-1.5 sm:gap-2" role="group" aria-label="Amount calculator">
+      <div className="grid grid-cols-4 gap-1" role="group" aria-label="Amount calculator">
         {keys.map(({ key, label, labelText, wide }) => (
           <button key={key} type="button" aria-label={labelText || (key === '.' ? 'Decimal point' : `Enter ${key}`)}
             onClick={() => press(key)}
-            className={`flex h-[40px] items-center justify-center rounded-xl text-[9px] font-semibold text-white transition active:scale-95 hover:bg-[#302638] sm:h-[46px] ${wide ? 'col-span-2' : ''} bg-[#1D1824]`}>
+            className={`flex h-[38px] items-center justify-center rounded-xl text-[9px] font-semibold text-white transition active:scale-95 hover:bg-[#302638] sm:h-[42px] ${wide ? 'col-span-2' : ''} bg-[#1D1824]`}>
             {label}
           </button>
         ))}

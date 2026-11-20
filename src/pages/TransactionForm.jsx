@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import CategoryPicker from '../components/forms/CategoryPicker';
-import AmountInput from '../components/forms/TransactionAmountInput';
+import AmountInput, { AmountDisplay } from '../components/forms/TransactionAmountInput';
 import { useApp } from '../context/AppContext';
 import { parseAmount } from '../utils/currencyUtils';
 import { formatDate, isValidISODate, monthOf, todayISO } from '../utils/dateUtils';
@@ -109,17 +109,19 @@ function Form({ type, editing }) {
 
         <section aria-label="Transaction details" className="z-10 max-h-[72dvh] shrink-0 overflow-y-auto rounded-t-[22px] bg-[#302638] px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_28px_rgba(0,0,0,0.5)] sm:px-6">
           <div className="mx-auto w-full max-w-[470px]">
-            <label className="mb-2 flex h-10 items-center gap-2.5 rounded-xl bg-[#1D1824] px-3">
-              <PencilLine size={16} className="shrink-0 text-white/65" aria-hidden="true" />
-              <span className="sr-only">Add a note</span>
-              <input value={description} onChange={(event) => { setDescription(event.target.value); setErrors((current) => ({ ...current, description: '' })); }}
-                maxLength={300} placeholder="Add a note" aria-invalid={!!errors.description}
-                className="min-w-0 flex-1 bg-transparent text-[9px] text-white outline-none placeholder:text-white/40" />
-            </label>
+            <div className="mb-2 flex min-w-0 items-center gap-2">
+              <label className="flex h-10 min-w-0 flex-1 items-center gap-2.5 rounded-xl bg-[#1D1824] px-3">
+                <PencilLine size={16} className="shrink-0 text-white/65" aria-hidden="true" />
+                <span className="sr-only">Add a note</span>
+                <input value={description} onChange={(event) => { setDescription(event.target.value); setErrors((current) => ({ ...current, description: '' })); }}
+                  maxLength={300} placeholder="Add a note" aria-invalid={!!errors.description}
+                  className="min-w-0 flex-1 bg-transparent text-[9px] text-white outline-none placeholder:text-white/40" />
+              </label>
+              <AmountDisplay value={amount} invalid={!!errors.amount} describedBy={errors.amount ? 'transaction-amount-error' : undefined} />
+            </div>
             {errors.description && <p role="alert" className="mb-1 text-[9px] text-[#FF756B]">{errors.description}</p>}
 
-            <AmountInput value={amount} onChange={(value) => { setAmount(value); setErrors((current) => ({ ...current, amount: '' })); }}
-              invalid={!!errors.amount} describedBy={errors.amount ? 'transaction-amount-error' : undefined} />
+            <AmountInput value={amount} onChange={(value) => { setAmount(value); setErrors((current) => ({ ...current, amount: '' })); }} />
             {errors.amount && <p id="transaction-amount-error" role="alert" className="mt-1 text-center text-[9px] text-[#FF756B]">{errors.amount}</p>}
 
             <div className="mt-2 flex items-center gap-2">
