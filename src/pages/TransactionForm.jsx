@@ -1,4 +1,4 @@
-import { CalendarDays, Check, PencilLine, X } from 'lucide-react';
+import { CalendarDays, Check, PencilLine } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -42,8 +42,6 @@ function Form({ type, editing }) {
     }
   }, [categories, categoryId, type]);
 
-  const close = () => navigate(`/spend?tab=${type}`);
-
   const submit = (event) => {
     event.preventDefault();
     const parsedAmount = parseAmount(amount);
@@ -73,14 +71,6 @@ function Form({ type, editing }) {
   return (
     <div className="fixed inset-0 z-[70] flex h-[100dvh] flex-col overflow-hidden bg-[#1D1824] text-white"
       style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-      <header className="relative flex h-[54px] shrink-0 items-center justify-center px-14">
-        <h1 className="text-[9px] font-semibold tracking-wide">{editing ? 'Edit transaction' : 'New transaction'}</h1>
-        <button type="button" aria-label="Close transaction entry" onClick={close}
-          className="absolute right-4 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-[#1c1c1c] text-white/75 transition hover:bg-[#292929] active:scale-95">
-          <X size={19} />
-        </button>
-      </header>
-
       <nav aria-label="Transaction type" className="mx-auto flex h-12 w-full max-w-[500px] shrink-0 items-stretch justify-around px-3">
         {TABS.map((tab) => (
           editing
@@ -96,10 +86,6 @@ function Form({ type, editing }) {
               {type === tab.type && <span className="absolute inset-x-4 bottom-0 h-[3px] rounded-full bg-[#FFD60A]" />}
             </Link>
         ))}
-        <button type="button" disabled aria-disabled="true" title="Transfers are not available yet"
-          className="relative min-w-[100px] px-4 text-[9px] font-semibold text-white/35">
-          Transfer
-        </button>
       </nav>
 
       <form onSubmit={submit} noValidate className="flex min-h-0 flex-1 flex-col">
