@@ -71,10 +71,10 @@ function Form({ type, editing }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex h-[100dvh] flex-col overflow-hidden bg-black text-white"
+    <div className="fixed inset-0 z-[70] flex h-[100dvh] flex-col overflow-hidden bg-[#1D1824] text-white"
       style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <header className="relative flex h-[54px] shrink-0 items-center justify-center px-14">
-        <h1 className="text-[16px] font-semibold tracking-wide">{editing ? 'Edit transaction' : 'New transaction'}</h1>
+        <h1 className="text-[9px] font-semibold tracking-wide">{editing ? 'Edit transaction' : 'New transaction'}</h1>
         <button type="button" aria-label="Close transaction entry" onClick={close}
           className="absolute right-4 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-[#1c1c1c] text-white/75 transition hover:bg-[#292929] active:scale-95">
           <X size={19} />
@@ -86,18 +86,18 @@ function Form({ type, editing }) {
           editing
             ? <button key={tab.type} type="button" disabled
               aria-current={type === tab.type ? 'page' : undefined}
-              className={`relative min-w-[100px] px-4 text-[13px] font-semibold ${type === tab.type ? 'text-white' : 'text-white/40'}`}>
+              className={`relative min-w-[100px] px-4 text-[9px] font-semibold ${type === tab.type ? 'text-white' : 'text-white/40'}`}>
               {tab.label}
               {type === tab.type && <span className="absolute inset-x-4 bottom-0 h-[3px] rounded-full bg-[#FFD60A]" />}
             </button>
             : <Link key={tab.type} to={`/spend/new/${tab.type}`} replace aria-current={type === tab.type ? 'page' : undefined}
-              className={`relative flex min-w-[100px] items-center justify-center px-4 text-[13px] font-semibold transition ${type === tab.type ? 'text-white' : 'text-white/45 hover:text-white/80'}`}>
+              className={`relative flex min-w-[100px] items-center justify-center px-4 text-[9px] font-semibold transition ${type === tab.type ? 'text-white' : 'text-white/45 hover:text-white/80'}`}>
               {tab.label}
               {type === tab.type && <span className="absolute inset-x-4 bottom-0 h-[3px] rounded-full bg-[#FFD60A]" />}
             </Link>
         ))}
         <button type="button" disabled aria-disabled="true" title="Transfers are not available yet"
-          className="relative min-w-[100px] px-4 text-[13px] font-semibold text-white/35">
+          className="relative min-w-[100px] px-4 text-[9px] font-semibold text-white/35">
           Transfer
         </button>
       </nav>
@@ -109,21 +109,21 @@ function Form({ type, editing }) {
 
         <section aria-label="Transaction details" className="z-10 max-h-[72dvh] shrink-0 overflow-y-auto rounded-t-[22px] bg-[#302638] px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_28px_rgba(0,0,0,0.5)] sm:px-6">
           <div className="mx-auto w-full max-w-[470px]">
-            <label className="mb-2 flex h-10 items-center gap-2.5 rounded-xl bg-[#222] px-3">
+            <label className="mb-2 flex h-10 items-center gap-2.5 rounded-xl bg-[#1D1824] px-3">
               <PencilLine size={16} className="shrink-0 text-white/65" aria-hidden="true" />
               <span className="sr-only">Add a note</span>
               <input value={description} onChange={(event) => { setDescription(event.target.value); setErrors((current) => ({ ...current, description: '' })); }}
                 maxLength={300} placeholder="Add a note" aria-invalid={!!errors.description}
-                className="min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-white/40" />
+                className="min-w-0 flex-1 bg-transparent text-[9px] text-white outline-none placeholder:text-white/40" />
             </label>
-            {errors.description && <p role="alert" className="mb-1 text-[11px] text-[#FF756B]">{errors.description}</p>}
+            {errors.description && <p role="alert" className="mb-1 text-[9px] text-[#FF756B]">{errors.description}</p>}
 
             <AmountInput value={amount} onChange={(value) => { setAmount(value); setErrors((current) => ({ ...current, amount: '' })); }}
               invalid={!!errors.amount} describedBy={errors.amount ? 'transaction-amount-error' : undefined} />
-            {errors.amount && <p id="transaction-amount-error" role="alert" className="mt-1 text-center text-[11px] text-[#FF756B]">{errors.amount}</p>}
+            {errors.amount && <p id="transaction-amount-error" role="alert" className="mt-1 text-center text-[9px] text-[#FF756B]">{errors.amount}</p>}
 
             <div className="mt-2 flex items-center gap-2">
-              <label className="relative flex h-[42px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#272727] text-[12px] font-semibold text-white/85 transition active:scale-[.98]">
+              <label className="relative flex h-[42px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1D1824] text-[9px] font-semibold text-white/85 transition active:scale-[.98]">
                 <CalendarDays size={16} className="text-white/65" />
                 <span>{date === todayISO() ? 'Today' : formatDate(date, 'dd MMM yyyy')}</span>
                 <input type="date" value={date} min="2000-01-01" max="2100-12-31" aria-label="Choose transaction date"
@@ -135,7 +135,7 @@ function Form({ type, editing }) {
                 <Check size={23} strokeWidth={2.8} />
               </button>
             </div>
-            {errors.date && <p role="alert" className="mt-1 text-center text-[11px] text-[#FF756B]">{errors.date}</p>}
+            {errors.date && <p role="alert" className="mt-1 text-center text-[9px] text-[#FF756B]">{errors.date}</p>}
           </div>
         </section>
       </form>

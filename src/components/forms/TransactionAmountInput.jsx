@@ -118,15 +118,15 @@ export default function AmountInput({ value, onChange, invalid, describedBy }) {
         <span className="text-[10px] font-semibold tracking-wider text-white/40">INR</span>
       </div>
       <div className="grid grid-cols-4 gap-1.5 sm:gap-2" role="group" aria-label="Amount calculator">
-        {keys.map(({ key, label, labelText, action, wide }) => (
+        {keys.map(({ key, label, labelText, wide }) => (
           <button key={key} type="button" aria-label={labelText || (key === '.' ? 'Decimal point' : `Enter ${key}`)}
             onClick={() => press(key)}
-            className={`flex h-[40px] items-center justify-center rounded-xl text-[16px] font-semibold text-white transition active:scale-95 sm:h-[46px] ${wide ? 'col-span-2' : ''} ${action ? 'bg-[#333]' : 'bg-[#272727] hover:bg-[#383838]'}`}>
+            className={`flex h-[40px] items-center justify-center rounded-xl text-[9px] font-semibold text-white transition active:scale-95 hover:bg-[#302638] sm:h-[46px] ${wide ? 'col-span-2' : ''} bg-[#1D1824]`}>
             {label}
           </button>
         ))}
       </div>
-      {calculatorError && <p role="alert" className="mt-1 text-center text-[11px] font-medium text-[#FF756B]">{calculatorError}</p>}
+      {calculatorError && <p role="alert" className="mt-1 text-center text-[9px] font-medium text-[#FF756B]">{calculatorError}</p>}
     </div>
   );
 }

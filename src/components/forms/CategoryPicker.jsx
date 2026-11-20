@@ -62,17 +62,17 @@ export default function CategoryPicker({ type, value, onChange, error }) {
           return (
             <button key={c.id} type="button" role="radio" aria-checked={on} onClick={() => onChange(c.id)}
               className="group flex min-w-0 flex-col items-center gap-2 rounded-xl p-1 text-center transition active:scale-95">
-              <span className={`flex h-[54px] w-[54px] items-center justify-center rounded-full bg-[#222] transition sm:h-[62px] sm:w-[62px] ${on ? 'ring-2 ring-[#FFD60A] ring-offset-2 ring-offset-black' : ''}`}>
+              <span className={`flex h-[54px] w-[54px] items-center justify-center rounded-full bg-[#222] transition sm:h-[62px] sm:w-[62px] ${on ? 'ring-2 ring-[#FFD60A] ring-offset-2 ring-offset-[#1D1824]' : ''}`}>
                 <Icon size={27} strokeWidth={1.8} style={{ color: c.color }} />
               </span>
-              <span className="w-full truncate text-[9px] font-semibold uppercase tracking-wide text-white/85 sm:text-[11px]">{c.name}</span>
+              <span className="w-full truncate text-[9px] font-semibold uppercase tracking-wide text-white/85">{c.name}</span>
             </button>
           );
         })}
         <button type="button" onClick={() => setAdding((a) => !a)} aria-expanded={adding}
           className="flex min-w-0 flex-col items-center gap-2 rounded-xl p-1 text-muted transition active:scale-95 hover:text-[#FFD60A]">
           <span className="flex h-[54px] w-[54px] items-center justify-center rounded-full bg-[#222] sm:h-[62px] sm:w-[62px]"><Plus size={22} /></span>
-          <span className="text-[9px] font-semibold uppercase tracking-wide sm:text-[11px]">Add new</span>
+          <span className="text-[9px] font-semibold uppercase tracking-wide">Add new</span>
         </button>
       </div>
       {error && <p role="alert" className="mt-2 text-[9px] font-semibold text-expense sm:text-xs">{error}</p>}
