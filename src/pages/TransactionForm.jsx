@@ -107,7 +107,7 @@ function Form({ type, editing }) {
           <CategoryPicker type={type} value={categoryId} onChange={(value) => { setCategoryId(value); setErrors((current) => ({ ...current, categoryId: '' })); }} error={errors.categoryId} />
         </section>
 
-        <section aria-label="Transaction details" className="z-10 max-h-[72dvh] shrink-0 overflow-y-auto rounded-t-[22px] bg-[#111] px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_28px_rgba(0,0,0,0.5)] sm:px-6">
+        <section aria-label="Transaction details" className="z-10 max-h-[72dvh] shrink-0 overflow-y-auto rounded-t-[22px] bg-[#302638] px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_28px_rgba(0,0,0,0.5)] sm:px-6">
           <div className="mx-auto w-full max-w-[470px]">
             <label className="mb-2 flex h-10 items-center gap-2.5 rounded-xl bg-[#222] px-3">
               <PencilLine size={16} className="shrink-0 text-white/65" aria-hidden="true" />
@@ -131,7 +131,7 @@ function Form({ type, editing }) {
                   className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
               </label>
               <button type="submit" disabled={isSubmitting} aria-label={editing ? 'Save transaction changes' : 'Save transaction'}
-                className="flex h-[42px] w-[56px] shrink-0 items-center justify-center rounded-xl bg-[#FFD60A] text-black transition hover:brightness-105 active:scale-95 disabled:opacity-50">
+                className="flex h-[42px] w-[56px] shrink-0 items-center justify-center rounded-xl bg-[#F38DFD] text-black transition hover:brightness-105 active:scale-95 disabled:opacity-50">
                 <Check size={23} strokeWidth={2.8} />
               </button>
             </div>
