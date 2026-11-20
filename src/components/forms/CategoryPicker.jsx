@@ -2,7 +2,7 @@ import { Check, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { COLOR_PALETTE, ICON_NAMES, isNameTaken } from '../../services/categoryService';
-import CategoryIcon from '../ui/CategoryIcon';
+import CategoryIcon, { ICONS } from '../ui/CategoryIcon';
 
 export function IconColorFields({ icon, color, onIcon, onColor, idPrefix = 'cat' }) {
   return (
@@ -55,23 +55,24 @@ export default function CategoryPicker({ type, value, onChange, error }) {
 
   return (
     <div>
-      <div role="radiogroup" aria-label={`${type} category`} className="grid max-h-44 grid-cols-2 gap-2 overflow-y-auto overscroll-contain pr-1 sm:max-h-none sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:pr-0 lg:grid-cols-4">
+      <div role="radiogroup" aria-label={`${type} category`} className="grid grid-cols-4 gap-x-1 gap-y-4 sm:gap-x-4 sm:gap-y-6">
         {list.map((c) => {
           const on = value === c.id;
+          const Icon = ICONS[c.icon] || ICONS.Tag;
           return (
             <button key={c.id} type="button" role="radio" aria-checked={on} onClick={() => onChange(c.id)}
-              className={`group relative flex flex-col items-center gap-1.5 rounded-2xl border p-2 text-center transition hover:-translate-y-0.5 sm:gap-2.5 sm:p-4 ${on ? 'border-transparent bg-raised' : 'border-line/70 hover:bg-raised/60'}`}
-              style={on ? { boxShadow: `0 0 0 2px ${c.color}, 0 10px 24px -14px ${c.color}` } : undefined}>
-              {on && <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full text-white" style={{ background: c.color }}><Check size={12} strokeWidth={3} /></span>}
-              <CategoryIcon name={c.icon} color={c.color} size={36} className="sm:!h-[46px] sm:!w-[46px]" />
-              <span className="w-full truncate text-[9px] font-bold sm:text-sm">{c.name}</span>
+              className="group flex min-w-0 flex-col items-center gap-2 rounded-xl p-1 text-center transition active:scale-95">
+              <span className={`flex h-[54px] w-[54px] items-center justify-center rounded-full bg-[#222] transition sm:h-[62px] sm:w-[62px] ${on ? 'ring-2 ring-[#FFD60A] ring-offset-2 ring-offset-black' : ''}`}>
+                <Icon size={27} strokeWidth={1.8} style={{ color: c.color }} />
+              </span>
+              <span className="w-full truncate text-[9px] font-semibold uppercase tracking-wide text-white/85 sm:text-[11px]">{c.name}</span>
             </button>
           );
         })}
         <button type="button" onClick={() => setAdding((a) => !a)} aria-expanded={adding}
-          className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line p-2 text-muted transition hover:border-accent hover:text-accent sm:gap-2.5 sm:p-4">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-raised sm:h-[46px] sm:w-[46px]"><Plus size={22} /></span>
-          <span className="text-[9px] font-bold sm:text-sm">Add new</span>
+          className="flex min-w-0 flex-col items-center gap-2 rounded-xl p-1 text-muted transition active:scale-95 hover:text-[#FFD60A]">
+          <span className="flex h-[54px] w-[54px] items-center justify-center rounded-full bg-[#222] sm:h-[62px] sm:w-[62px]"><Plus size={22} /></span>
+          <span className="text-[9px] font-semibold uppercase tracking-wide sm:text-[11px]">Add new</span>
         </button>
       </div>
       {error && <p role="alert" className="mt-2 text-[9px] font-semibold text-expense sm:text-xs">{error}</p>}

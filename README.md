@@ -7,7 +7,7 @@ Palette: forest `#0B3D2E` · leaf `#00A651` · cream `#F7F4ED`, with independent
 
 ## Features
 - **Overview** – balance, income, expenses, savings (with month-over-month change), income-vs-expense bars, expense donut, spending trend, top categories, recent transactions, month/year selector.
-- **Spend** – Income / Expenses tabs, full-page forms (live Indian-grouped ₹ input, date picker, icon-based category grid with inline "Add new"), search, edit, delete with confirmation.
+- **Spend** – Income / Expenses tabs, full-screen transaction entry with an INR calculator keypad, note and date controls, icon-based category grid with inline "Add new", search, edit, and delete with confirmation.
 - **Insights** – category ranking, distribution donut, income vs. expense, spending trend (6/12 months), highest category, month-over-month comparison — all computed from stored transactions.
 - **Budgets** – per-category monthly limits, progress bars, 80% / 100% thresholds, in-app alerts.
 - **Categories** – create, rename, recolour, re-icon; defaults are protected; deleting a category in use asks to reassign or delete its transactions.

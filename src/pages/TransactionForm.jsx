@@ -1,15 +1,18 @@
-import { ArrowDownLeft, ArrowLeft, Save } from 'lucide-react';
-import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { CalendarDays, Check, PencilLine, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import AmountInput from '../components/forms/AmountInput';
 import CategoryPicker from '../components/forms/CategoryPicker';
+import AmountInput from '../components/forms/TransactionAmountInput';
 import { useApp } from '../context/AppContext';
 import { parseAmount } from '../utils/currencyUtils';
-import { isValidISODate, monthOf, todayISO } from '../utils/dateUtils';
+import { formatDate, isValidISODate, monthOf, todayISO } from '../utils/dateUtils';
 
 const MAX_AMOUNT = 999999999.99;
+const TABS = [
+  { type: 'expense', label: 'Expenses' },
+  { type: 'income', label: 'Income' },
+];
 
 export default function TransactionForm() {
   const { type: typeParam, id } = useParams();
@@ -24,101 +27,117 @@ export default function TransactionForm() {
 function Form({ type, editing }) {
   const navigate = useNavigate();
   const { categories, addTransaction, updateTransaction, setMonth } = useApp();
-  const income = type === 'income';
-  const { register, control, handleSubmit, watch, setFocus, setValue, formState: { errors, isSubmitting } } = useForm({
-    mode: 'onTouched',
-    defaultValues: {
-      amount: editing ? String(editing.amount) : '',
-      description: editing?.description || '',
-      date: editing?.date || todayISO(),
-      // Income has a single default category (Salary) — preselect it to save a tap.
-      categoryId: editing?.categoryId || (income ? categories.find((c) => c.type === 'income')?.id || '' : ''),
-    },
-  });
-  const desc = watch('description') || '';
-  useEffect(() => { setFocus('amount'); }, [setFocus]);
-  useEffect(() => {
-    if (editing && !categories.some((c) => c.id === editing.categoryId)) setValue('categoryId', '');
-  }, [categories, editing, setValue]);
+  const [amount, setAmount] = useState(editing ? String(editing.amount) : '');
+  const [description, setDescription] = useState(editing?.description || '');
+  const [date, setDate] = useState(editing?.date || todayISO());
+  const [categoryId, setCategoryId] = useState(editing?.categoryId || (
+    type === 'income' ? categories.find((category) => category.type === 'income')?.id || '' : ''
+  ));
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = (v) => {
-    const data = { type, amount: parseAmount(v.amount), description: v.description.trim(), date: v.date, categoryId: v.categoryId };
+  useEffect(() => {
+    if (categoryId && !categories.some((category) => category.id === categoryId && category.type === type)) {
+      setCategoryId('');
+    }
+  }, [categories, categoryId, type]);
+
+  const close = () => navigate(`/spend?tab=${type}`);
+
+  const submit = (event) => {
+    event.preventDefault();
+    const parsedAmount = parseAmount(amount);
+    const nextErrors = {};
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) nextErrors.amount = 'Enter an amount greater than ₹0.00.';
+    else if (parsedAmount > MAX_AMOUNT) nextErrors.amount = 'That amount is too large.';
+    if (!categoryId || !categories.some((category) => category.id === categoryId && category.type === type)) {
+      nextErrors.categoryId = 'Choose a category.';
+    }
+    if (!isValidISODate(date) || date < '2000-01-01' || date > '2100-12-31') nextErrors.date = 'Pick a valid date.';
+    if (description.length > 300) nextErrors.description = 'Keep the note under 300 characters.';
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length) return;
+
+    const data = { type, amount: parsedAmount, description: description.trim(), date, categoryId };
+    setIsSubmitting(true);
     try {
       if (editing) updateTransaction(editing.id, data); else addTransaction(data);
-      setMonth(monthOf(data.date)); // jump to the month the record belongs to
+      setMonth(monthOf(data.date));
       navigate(`/spend?tab=${type}`);
     } catch {
       toast.error('Could not save the transaction. Please try again.');
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <Link to={`/spend?tab=${type}`} className="mb-5 inline-flex items-center gap-2 text-[9px] font-semibold text-muted hover:text-ink sm:text-sm"><ArrowLeft size={16} />Back to Spend</Link>
-      {income && (
-        <div className="mb-7 flex items-center gap-4">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-income/15 text-income">
-            <ArrowDownLeft size={24} />
-          </span>
-          <div>
-            <h1 className="text-[9px] font-extrabold tracking-tight sm:text-[28px]">{editing ? 'Edit' : 'New'} income</h1>
-            <p className="text-[9px] text-muted sm:text-sm">Money coming in — it will increase your balance.</p>
+    <div className="fixed inset-0 z-[70] flex h-[100dvh] flex-col overflow-hidden bg-black text-white"
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <header className="relative flex h-[54px] shrink-0 items-center justify-center px-14">
+        <h1 className="text-[16px] font-semibold tracking-wide">{editing ? 'Edit transaction' : 'New transaction'}</h1>
+        <button type="button" aria-label="Close transaction entry" onClick={close}
+          className="absolute right-4 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-[#1c1c1c] text-white/75 transition hover:bg-[#292929] active:scale-95">
+          <X size={19} />
+        </button>
+      </header>
+
+      <nav aria-label="Transaction type" className="mx-auto flex h-12 w-full max-w-[500px] shrink-0 items-stretch justify-around px-3">
+        {TABS.map((tab) => (
+          editing
+            ? <button key={tab.type} type="button" disabled
+              aria-current={type === tab.type ? 'page' : undefined}
+              className={`relative min-w-[100px] px-4 text-[13px] font-semibold ${type === tab.type ? 'text-white' : 'text-white/40'}`}>
+              {tab.label}
+              {type === tab.type && <span className="absolute inset-x-4 bottom-0 h-[3px] rounded-full bg-[#FFD60A]" />}
+            </button>
+            : <Link key={tab.type} to={`/spend/new/${tab.type}`} replace aria-current={type === tab.type ? 'page' : undefined}
+              className={`relative flex min-w-[100px] items-center justify-center px-4 text-[13px] font-semibold transition ${type === tab.type ? 'text-white' : 'text-white/45 hover:text-white/80'}`}>
+              {tab.label}
+              {type === tab.type && <span className="absolute inset-x-4 bottom-0 h-[3px] rounded-full bg-[#FFD60A]" />}
+            </Link>
+        ))}
+        <button type="button" disabled aria-disabled="true" title="Transfers are not available yet"
+          className="relative min-w-[100px] px-4 text-[13px] font-semibold text-white/35">
+          Transfer
+        </button>
+      </nav>
+
+      <form onSubmit={submit} noValidate className="flex min-h-0 flex-1 flex-col">
+        <section aria-label={`${type} categories`} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-5 pt-4 sm:px-6">
+          <CategoryPicker type={type} value={categoryId} onChange={(value) => { setCategoryId(value); setErrors((current) => ({ ...current, categoryId: '' })); }} error={errors.categoryId} />
+        </section>
+
+        <section aria-label="Transaction details" className="z-10 max-h-[72dvh] shrink-0 overflow-y-auto rounded-t-[22px] bg-[#111] px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_28px_rgba(0,0,0,0.5)] sm:px-6">
+          <div className="mx-auto w-full max-w-[470px]">
+            <label className="mb-2 flex h-10 items-center gap-2.5 rounded-xl bg-[#222] px-3">
+              <PencilLine size={16} className="shrink-0 text-white/65" aria-hidden="true" />
+              <span className="sr-only">Add a note</span>
+              <input value={description} onChange={(event) => { setDescription(event.target.value); setErrors((current) => ({ ...current, description: '' })); }}
+                maxLength={300} placeholder="Add a note" aria-invalid={!!errors.description}
+                className="min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-white/40" />
+            </label>
+            {errors.description && <p role="alert" className="mb-1 text-[11px] text-[#FF756B]">{errors.description}</p>}
+
+            <AmountInput value={amount} onChange={(value) => { setAmount(value); setErrors((current) => ({ ...current, amount: '' })); }}
+              invalid={!!errors.amount} describedBy={errors.amount ? 'transaction-amount-error' : undefined} />
+            {errors.amount && <p id="transaction-amount-error" role="alert" className="mt-1 text-center text-[11px] text-[#FF756B]">{errors.amount}</p>}
+
+            <div className="mt-2 flex items-center gap-2">
+              <label className="relative flex h-[42px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#272727] text-[12px] font-semibold text-white/85 transition active:scale-[.98]">
+                <CalendarDays size={16} className="text-white/65" />
+                <span>{date === todayISO() ? 'Today' : formatDate(date, 'dd MMM yyyy')}</span>
+                <input type="date" value={date} min="2000-01-01" max="2100-12-31" aria-label="Choose transaction date"
+                  onChange={(event) => { setDate(event.target.value); setErrors((current) => ({ ...current, date: '' })); }}
+                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
+              </label>
+              <button type="submit" disabled={isSubmitting} aria-label={editing ? 'Save transaction changes' : 'Save transaction'}
+                className="flex h-[42px] w-[56px] shrink-0 items-center justify-center rounded-xl bg-[#FFD60A] text-black transition hover:brightness-105 active:scale-95 disabled:opacity-50">
+                <Check size={23} strokeWidth={2.8} />
+              </button>
+            </div>
+            {errors.date && <p role="alert" className="mt-1 text-center text-[11px] text-[#FF756B]">{errors.date}</p>}
           </div>
-        </div>
-      )}
-
-      {!editing && (
-        <div role="group" aria-label="Transaction type" className="mb-6 grid grid-cols-2 gap-1 rounded-xl border border-line bg-bg/40 p-1">
-          {['income', 'expense'].map((t) => (
-            <Link key={t} to={`/spend/new/${t}`} replace aria-current={type === t ? 'page' : undefined}
-              className={`flex h-10 items-center justify-center rounded-lg text-[9px] font-bold capitalize transition sm:text-sm ${type === t ? 'bg-accent text-accent-ink shadow' : 'text-muted hover:text-ink'}`}>{t}</Link>
-          ))}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="card space-y-4 p-3 sm:space-y-8 sm:p-8">
-        <div>
-          <label htmlFor="amount" className="label !mb-1 !text-[9px] sm:!text-[11px]">Amount</label>
-          <Controller name="amount" control={control}
-            rules={{
-              required: 'Enter an amount.',
-              validate: (v) => {
-                const n = parseAmount(v);
-                if (!Number.isFinite(n) || n <= 0) return 'Amount must be greater than ₹0.00.';
-                if (n > MAX_AMOUNT) return 'That amount is too large.';
-                return true;
-              },
-            }}
-            render={({ field }) => <AmountInput {...field} invalid={!!errors.amount} describedBy="amount-error" tone={income ? 'text-income' : 'text-expense'} calculator compact />} />
-          {errors.amount && <p id="amount-error" role="alert" className="mt-2 text-[9px] font-semibold text-expense sm:text-xs">{errors.amount.message}</p>}
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-[1fr_220px] sm:gap-6">
-          <div>
-            <label htmlFor="description" className="label !mb-1 !text-[9px] sm:!text-[11px]">Description <span className="font-medium normal-case tracking-normal">(optional)</span></label>
-            <textarea id="description" rows={2} className="field !h-auto resize-none py-2 !text-[9px] leading-snug sm:!text-sm" placeholder={income ? 'e.g. November salary credited' : 'e.g. Groceries for the week'}
-              aria-invalid={!!errors.description} aria-describedby="desc-help"
-              {...register('description', { maxLength: { value: 300, message: 'Keep the description under 300 characters.' } })} />
-            <p id="desc-help" className={`mt-1.5 text-right text-[9px] tnum sm:text-xs ${desc.length > 300 ? 'font-bold text-expense' : 'text-muted'}`}>{errors.description?.message || `${desc.length}/300`}</p>
-          </div>
-          <div>
-            <label htmlFor="date" className="label !mb-1 !text-[9px] sm:!text-[11px]">Date</label>
-            <input id="date" type="date" className="field !text-[9px] sm:!text-sm" min="2000-01-01" max="2100-12-31" aria-invalid={!!errors.date} aria-describedby="date-error"
-              {...register('date', { required: 'Pick a date.', validate: (v) => isValidISODate(v) || 'Enter a valid date.' })} />
-            {errors.date && <p id="date-error" role="alert" className="mt-2 text-[9px] font-semibold text-expense sm:text-xs">{errors.date.message}</p>}
-          </div>
-        </div>
-
-        <div>
-          <p className="label !mb-1 !text-[9px] sm:!text-[11px]">Category</p>
-          <Controller name="categoryId" control={control} rules={{ required: 'Choose a category.' }}
-            render={({ field }) => <CategoryPicker type={type} value={field.value} onChange={field.onChange} error={errors.categoryId?.message} />} />
-        </div>
-
-        <div className="flex flex-col-reverse gap-3 border-t border-line/60 pt-4 sm:flex-row sm:justify-end sm:pt-6">
-          <button type="button" className="btn-ghost !text-[9px] sm:min-w-32 sm:!text-sm" onClick={() => navigate(`/spend?tab=${type}`)}>Cancel</button>
-          <button type="submit" className="btn-primary !text-[9px] sm:min-w-48 sm:!text-sm" disabled={isSubmitting}><Save size={17} />{editing ? 'Save changes' : 'Save Transaction'}</button>
-        </div>
+        </section>
       </form>
     </div>
   );
